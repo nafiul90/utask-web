@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+}
+
+.form-actions {
+  padding-top: 1rem;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}

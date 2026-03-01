@@ -57,6 +57,22 @@ export const Api = {
     }
     return data as { path: string };
   },
+  uploadFile: async (token: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch(`${BASE_URL}/uploads/file`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.message || 'Upload failed');
+    }
+    return data as { path: string; filename: string; mimeType: string; size: number; originalName: string };
+  },
   listTasks: (token: string) =>
     request('/tasks', {
       headers: { Authorization: `Bearer ${token}` }
@@ -86,6 +102,18 @@ export const Api = {
   deleteTask: (token: string, id: string) =>
     request(`/tasks/${id}`, {
       method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  addComment: (token: string, taskId: string, content: string) =>
+    request(`/tasks/${taskId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  replyToComment: (token: string, taskId: string, commentId: string, content: string) =>
+    request(`/tasks/${taskId}/comments/${commentId}/replies`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
       headers: { Authorization: `Bearer ${token}` }
     })
 };

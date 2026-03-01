@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { Api } from '../../lib/api';
+import { FileUploader } from './FileUploader';
+import { FileList } from './FileList';
 
 type User = { id: string; fullName: string };
 
@@ -23,6 +25,7 @@ interface TaskFormModalProps {
 export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps) => {
   const { register, handleSubmit, formState: { errors } } = useForm<TaskFormData>();
   const [saving, setSaving] = useState(false);
+  const [attachments, setAttachments] = useState<any[]>([]);
   const { data: users } = useSWR(['users', token], ([_, t]) => Api.listUsers(t));
 
   const onSubmit = async (data: TaskFormData) => {
@@ -30,7 +33,8 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
       setSaving(true);
       await Api.createTask(token, {
         ...data,
-        dueDate: new Date(data.dueDate).toISOString()
+        dueDate: new Date(data.dueDate).toISOString(),
+        attachments
       });
       onSuccess();
       onClose();
@@ -40,6 +44,10 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -93,6 +101,12 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
               className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
               placeholder="Task details..."
             />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm text-slate-300">Attachments</label>
+            <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
+            <FileList files={attachments} onRemove={handleRemoveFile} />
           </div>
 
           <div className="form-actions flex justify-end gap-3 pt-4 border-t border-white/10">

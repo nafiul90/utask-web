@@ -56,5 +56,36 @@ export const Api = {
       throw new Error(data?.message || 'Upload failed');
     }
     return data as { path: string };
-  }
+  },
+  listTasks: (token: string) =>
+    request('/tasks', {
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  getTask: (token: string, id: string) =>
+    request(`/tasks/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  createTask: (token: string, payload: Record<string, unknown>) =>
+    request('/tasks', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  updateTask: (token: string, id: string, payload: Record<string, unknown>) =>
+    request(`/tasks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  updateTaskStatus: (token: string, id: string, status: string) =>
+    request(`/tasks/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  deleteTask: (token: string, id: string) =>
+    request(`/tasks/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    })
 };

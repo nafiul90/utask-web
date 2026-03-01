@@ -22,3 +22,27 @@ textarea,
 select {
   font: inherit;
 }
+
+/* Quill Dark Mode Overrides */
+.ql-toolbar {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.ql-container {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  font-size: 1rem !important;
+  color: white !important;
+}
+.ql-picker {
+  color: #ccc !important;
+}
+.ql-stroke {
+  stroke: #ccc !important;
+}
+.ql-fill {
+  fill: #ccc !important;
+}
+.ql-picker-options {
+  background-color: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}

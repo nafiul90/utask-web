@@ -18,6 +18,9 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             <Link href="/" className="hover:text-rose-300">
               Dashboard
             </Link>
+            <Link href="/tasks" className="hover:text-rose-300">
+              Tasks
+            </Link>
             <Link href="/profile" className="hover:text-rose-300">
               Profile
             </Link>

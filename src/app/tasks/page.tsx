@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { ProtectedPage } from '../../components/ProtectedPage';
 import { DashboardLayout } from '../../components/DashboardLayout';
@@ -12,55 +13,51 @@ import { TaskDetailsModal } from '../../components/tasks/TaskDetailsModal';
 import { Search, Filter, X } from 'lucide-react';
 
 export default function TasksPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { token, user } = useAuth();
-  const { data: tasks, error, mutate } = useSWR(token ? ['tasks', token] : null, ([_, t]) => Api.listTasks(t));
+  
+  // URL sync states
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [selectedAssignee, setSelectedAssignee] = useState(searchParams.get('assignee') || '');
+  const [startDate, setStartDate] = useState(searchParams.get('startDate') || '');
+  const [endDate, setEndDate] = useState(searchParams.get('endDate') || '');
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Fetch data from backend with query params
+  const queryString = new URLSearchParams({
+    ...(searchQuery && { search: searchQuery }),
+    ...(selectedAssignee && { assignee: selectedAssignee }),
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
+  }).toString();
+
+  const { data: tasks, error, mutate } = useSWR(
+    token ? [`tasks`, queryString, token] : null, 
+    ([_, qs, t]) => Api.request(`/tasks?${qs}`, { headers: { Authorization: `Bearer ${t}` } })
+  );
+  
   const { data: users } = useSWR(token ? ['users', token] : null, ([_, t]) => Api.listUsers(t));
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  // Filter States
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAssignee, setSelectedAssignee] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('search', searchQuery);
+    if (selectedAssignee) params.set('assignee', selectedAssignee);
+    if (startDate) params.set('startDate', startDate);
+    if (endDate) params.set('endDate', endDate);
+    
+    const newUrl = `/tasks${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.replaceState(null, '', newUrl);
+  }, [searchQuery, selectedAssignee, startDate, endDate]);
 
   const canCreate = user?.role === 'admin' || user?.role === 'manager';
 
-  const filteredTasks = useMemo(() => {
-    if (!tasks) return [];
-    
-    return tasks.filter((task: any) => {
-      // Keyword search (Title or Description)
-      const matchesSearch = 
-        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      // Assignee search
-      const matchesAssignee = !selectedAssignee || task.assignee?._id === selectedAssignee;
-
-      // Date Range Filter
-      let matchesDate = true;
-      if (startDate || endDate) {
-        const taskDate = new Date(task.dueDate).getTime();
-        if (startDate) {
-          matchesDate = matchesDate && taskDate >= new Date(startDate).getTime();
-        }
-        if (endDate) {
-          const endDateTime = new Date(endDate);
-          endDateTime.setHours(23, 59, 59, 999);
-          matchesDate = matchesDate && taskDate <= endDateTime.getTime();
-        }
-      }
-
-      return matchesSearch && matchesAssignee && matchesDate;
-    });
-  }, [tasks, searchQuery, selectedAssignee, startDate, endDate]);
-
   const handleStatusChange = async (taskId: string, newStatus: string) => {
     if (!token) return;
-    
     mutate((currentTasks: any) => {
       return currentTasks?.map((t: any) => 
         t._id === taskId ? { ...t, status: newStatus } : t
@@ -194,7 +191,7 @@ export default function TasksPage() {
           ) : (
             <div className="flex-1 min-h-0">
               <TaskBoard 
-                tasks={filteredTasks} 
+                tasks={tasks} 
                 onTaskClick={(task) => setSelectedTaskId(task._id)} 
                 onStatusChange={handleStatusChange}
               />

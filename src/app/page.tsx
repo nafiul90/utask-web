@@ -19,9 +19,9 @@ export default function DashboardPage() {
     ([_, t, start, end]) => Api.getTaskStats(t, start, end)
   );
 
-  // FIX: dashboardResponse is the flat global stats object directly from backend
-  const globalStats = dashboardResponse || { total: 0, pending: 0, processing: 0, qa: 0, completed: 0, canceled: 0 };
-  const userStats: any[] = []; // Backend is currently not sending per-user data in this flat response
+  // FIX: Correctly access global and users from the nested response
+  const globalStats = dashboardResponse?.global || { total: 0, pending: 0, processing: 0, qa: 0, completed: 0, canceled: 0 };
+  const userStats = dashboardResponse?.users || [];
 
   const statItems = [
     { label: 'Total Tasks', value: globalStats.total, color: 'text-blue-400' },
@@ -87,8 +87,8 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* Per-User Task Stats (Temporarily hidden/empty as backend doesn't provide it in this flat response)*/}
-        <section className className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300 mb-6">
+        {/* Per-User Task Stats */}
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300 mb-6">
           <p className="text-xl font-semibold text-white mb-4">Team Member Task Breakdown</p>
           
           {error ? (
@@ -96,7 +96,7 @@ export default function DashboardPage() {
           ) : !dashboardResponse ? (
             <div className="text-slate-400 text-center py-8">Loading user task breakdown...</div>
           ) : userStats.length === 0 ? (
-            <div className="text-slate-500 text-center py-8 italic">No tasks assigned in this period. (Backend response currently does not include per-user data).</div>
+            <div className="text-slate-500 text-center py-8 italic">No tasks assigned in this period.</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {userStats.map((userStat: any) => (

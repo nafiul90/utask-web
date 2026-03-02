@@ -9,6 +9,8 @@ import { Avatar } from '../Avatar';
 import { FileUploader } from './FileUploader';
 import { FileList } from './FileList';
 import { CommentItem } from './CommentItem';
+import { LinkInput } from './LinkInput';
+import { LinkList } from './LinkList';
 
 type User = { id: string; fullName: string; role: string };
 
@@ -22,7 +24,7 @@ interface TaskDetailsModalProps {
 export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDetailsModalProps) => {
   const { user: currentUser } = useAuth();
   
-  const { data: task, error, mutate } = useSWR(
+  const { data: task, error, isLoading, mutate } = useSWR(
     ['task', taskId, token], 
     ([_, id, t]) => Api.getTask(t, id),
     { revalidateOnFocus: false } 
@@ -31,10 +33,12 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
   const { data: users } = useSWR(['users', token], ([_, t]) => Api.listUsers(t));
   const [saving, setSaving] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
+  const [links, setLinks] = useState<any[]>([]);
+  const [showAddLinkForm, setShowAddLinkForm] = useState(false); // State to control LinkInput form visibility
   const [commentText, setCommentText] = useState('');
   const [postingComment, setPostingComment] = useState(false);
   
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: { isDirty } } = useForm();
 
   useEffect(() => {
     if (task) {
@@ -46,6 +50,7 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
         startDate: task.startDate ? new Date(task.startDate).toISOString().split('T')[0] : '',
       });
       setAttachments(task.attachments || []);
+      setLinks(task.links || []); // Initialize links state
     }
   }, [task, reset]);
 
@@ -59,7 +64,8 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
         ...data,
         dueDate: new Date(data.dueDate).toISOString(),
         startDate: new Date(data.startDate).toISOString(),
-        attachments
+        attachments,
+        links // Include links in the update payload
       });
       onSuccess();
       mutate();
@@ -93,7 +99,19 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
     setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
-  if (!task && !error) return null;
+  const handleRemoveLink = (index: number) => {
+    setLinks(prev => prev.filter((_, i) => i !== index));
+  };
+
+  if (isLoading || error || !task) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-6">
+        <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-950 p-6 shadow-2xl max-h-[90vh] overflow-hidden flex items-center justify-center text-slate-400">
+          {isLoading ? 'Loading task...' : error ? 'Failed to load task.' : 'Task not found.'}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-6">
@@ -169,8 +187,19 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
 
                   <div>
                     <label className="mb-1 block text-sm text-slate-300">Attachments</label>
-                    <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
-                    <FileList files={attachments} onRemove={handleRemoveFile} />
+                    <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} disabled={saving} />
+                    <FileList files={attachments} onRemove={handleRemoveFile} readOnly={saving} />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm text-slate-300">Links</label>
+                    <LinkInput 
+                      onAdd={(link) => setLinks(prev => [...prev, link])} 
+                      showAddForm={showAddLinkForm}
+                      onToggleAddForm={setShowAddLinkForm}
+                      disabled={saving} // Disable when parent form is saving
+                    />
+                    <LinkList links={links} onRemove={handleRemoveLink} readOnly={saving} />
                   </div>
                 </form>
               ) : (
@@ -219,12 +248,21 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
                       <p className="text-sm text-slate-500">No attachments.</p>
                     )}
                   </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm text-slate-400">Links</label>
+                    {task.links?.length > 0 ? (
+                      <LinkList links={task.links} readOnly />
+                    ) : (
+                      <p className="text-sm text-slate-500">No links.</p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Comment Section (Right/Bottom) */}
-            <div className="w-full lg:w-[400px] flex flex-col bg-slate-900/30 lg:min-h-full">
+            <div className="w-full lg:w-[400px] flex flex-col bg-slate-900/30 border-t lg:border-t-0 border-white/10">
               <div className="p-6">
                 <h3 className="font-semibold text-slate-300 mb-4 uppercase tracking-wider text-xs">Comments</h3>
                 

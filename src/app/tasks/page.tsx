@@ -51,13 +51,17 @@ export default function TasksPage() {
     if (endDate) params.set('endDate', endDate);
     
     const newUrl = `/tasks${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.replaceState(null, '', newUrl);
-  }, [searchQuery, selectedAssignee, startDate, endDate]);
+    // Only replace state if the URL actually changes to prevent unnecessary history entries
+    if (window.location.search !== `?${params.toString()}` && window.location.pathname + window.location.search !== newUrl) {
+      router.replace(newUrl);
+    }
+  }, [searchQuery, selectedAssignee, startDate, endDate, router]);
 
   const canCreate = user?.role === 'admin' || user?.role === 'manager';
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
     if (!token) return;
+    
     mutate((currentTasks: any) => {
       return currentTasks?.map((t: any) => 
         t._id === taskId ? { ...t, status: newStatus } : t
@@ -80,7 +84,7 @@ export default function TasksPage() {
     setEndDate('');
   };
 
-  const activeFilterCount = [selectedAssignee, startDate, endDate].filter(Boolean).length;
+  const activeFilterCount = [searchQuery, selectedAssignee, startDate, endDate].filter(Boolean).length;
 
   return (
     <ProtectedPage>

@@ -6,6 +6,8 @@ import useSWR from 'swr';
 import { Api } from '../../lib/api';
 import { FileUploader } from './FileUploader';
 import { FileList } from './FileList';
+import { LinkInput } from './LinkInput';
+import { LinkList } from './LinkList';
 
 type User = { id: string; fullName: string };
 
@@ -26,6 +28,8 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
   const { register, handleSubmit, formState: { errors } } = useForm<TaskFormData>();
   const [saving, setSaving] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
+  const [links, setLinks] = useState<any[]>([]);
+  const [showAddLinkForm, setShowAddLinkForm] = useState(false); // State to control LinkInput form visibility
   const { data: users } = useSWR(['users', token], ([_, t]) => Api.listUsers(t));
 
   const onSubmit = async (data: TaskFormData) => {
@@ -34,7 +38,8 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
       await Api.createTask(token, {
         ...data,
         dueDate: new Date(data.dueDate).toISOString(),
-        attachments
+        attachments,
+        links
       });
       onSuccess();
       onClose();
@@ -48,6 +53,10 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
 
   const handleRemoveFile = (index: number) => {
     setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveLink = (index: number) => {
+    setLinks(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -107,6 +116,17 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
             <label className="mb-1 block text-sm text-slate-300">Attachments</label>
             <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
             <FileList files={attachments} onRemove={handleRemoveFile} />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm text-slate-300">Links</label>
+            <LinkInput 
+              onAdd={(link) => setLinks(prev => [...prev, link])} 
+              showAddForm={showAddLinkForm}
+              onToggleAddForm={setShowAddLinkForm}
+              disabled={saving} // Disable when parent form is saving
+            />
+            <LinkList links={links} onRemove={handleRemoveLink} />
           </div>
 
           <div className="form-actions flex justify-end gap-3 pt-4 border-t border-white/10">

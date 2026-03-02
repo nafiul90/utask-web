@@ -105,6 +105,10 @@ export const Api = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     }),
+  getTaskStats: (token: string) =>
+    request('/task-stats', {
+      headers: { Authorization: `Bearer ${token}` }
+    }),
   addComment: (token: string, taskId: string, content: string) =>
     request(`/tasks/${taskId}/comments`, {
       method: 'POST',

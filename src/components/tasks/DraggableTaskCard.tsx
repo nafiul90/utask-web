@@ -1,6 +1,7 @@
 'use client';
 
-import { useDraggable } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { TaskCard } from './TaskCard';
 
 type Task = {
@@ -17,16 +18,19 @@ interface DraggableTaskCardProps {
 }
 
 export const DraggableTaskCard = ({ task, onClick }: DraggableTaskCardProps) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task._id,
-    data: { status: task.status }
+    data: { task }
   });
 
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    opacity: 0.8,
-    zIndex: 999,
-  } : undefined;
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 100 : 0,
+    // Ensure the card takes its full width in the column
+    width: '100%',
+  };
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>

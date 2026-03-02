@@ -74,10 +74,13 @@ export const Api = {
     }
     return data as { path: string; filename: string; mimeType: string; size: number; originalName: string };
   },
-  listTasks: (token: string) =>
-    request('/tasks', {
+  listTasks: (token: string) => {
+    // Original listTasks might need to be adjusted to accept query params too, for consistency
+    // For now, it's used without them.
+    return request('/tasks', {
       headers: { Authorization: `Bearer ${token}` }
-    }),
+    });
+  },
   getTask: (token: string, id: string) =>
     request(`/tasks/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -105,8 +108,19 @@ export const Api = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     }),
-  getTaskStats: (token: string) =>
-    request('/task-stats', {
+  getTaskStats: (token: string, startDate?: string, endDate?: string) => {
+    const params = new URLSearchParams();
+    if (startDate) params.set('startDate', startDate);
+    if (endDate) params.set('endDate', endDate);
+    const queryString = params.toString();
+    return request(`/task-stats${queryString ? '?' + queryString : ''}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+  reorderTasks: (token: string, updates: Array<{ taskId: string; position: number; status: string }>) =>
+    request('/tasks/reorder', {
+      method: 'PATCH',
+      body: JSON.stringify({ updates }),
       headers: { Authorization: `Bearer ${token}` }
     }),
   addComment: (token: string, taskId: string, content: string) =>

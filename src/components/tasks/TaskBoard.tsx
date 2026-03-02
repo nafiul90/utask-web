@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react'; // Added useEffect here
+import { useState, useMemo, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, useSensor, useSensors, PointerSensor, closestCorners } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { DraggableTaskCard } from './DraggableTaskCard';
 import { DroppableColumn } from './DroppableColumn';
 import { TaskCard } from './TaskCard';
+import { useAuth } from '../../context/AuthContext';
+import { Api } from '../../lib/api';
 
 type Task = {
   _id: string;
@@ -13,6 +15,7 @@ type Task = {
   status: string;
   assignee?: { fullName: string; profilePicture?: string };
   dueDate: string;
+  position: number; 
 };
 
 interface TaskBoardProps {
@@ -30,12 +33,16 @@ const COLUMNS = [
 ];
 
 export const TaskBoard = ({ tasks: initialTasks, onTaskClick, onStatusChange }: TaskBoardProps) => {
+  const { token } = useAuth();
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+  // Synchronize local state with prop only when prop changes
   useEffect(() => {
-    setTasks(initialTasks);
+    if (JSON.stringify(tasks) !== JSON.stringify(initialTasks)) {
+      setTasks(initialTasks);
+    }
   }, [initialTasks]);
 
   const sensors = useSensors(
@@ -48,23 +55,24 @@ export const TaskBoard = ({ tasks: initialTasks, onTaskClick, onStatusChange }: 
 
   const grouped = useMemo(() => {
     const groups: Record<string, Task[]> = {};
-    COLUMNS.forEach(col => groups[col.id] = []); // Initialize all columns
+    COLUMNS.forEach(col => groups[col.id] = []);
     tasks.forEach((task) => {
       if (groups[task.status]) {
         groups[task.status].push(task);
       } else {
-        // Fallback for tasks with unknown status (e.g., new status not in COLUMNS)
-        groups.pending.push(task); // Or handle as an error/unassigned status
+        groups.pending.push(task); 
       }
+    });
+    Object.values(groups).forEach(group => {
+      group.sort((a, b) => a.position - b.position);
     });
     return groups;
   }, [tasks]);
 
   const findColumn = (id: string) => {
     if (COLUMNS.some(col => col.id === id)) {
-      return id; // It's a column ID
+      return id; 
     }
-    // Otherwise, it's a task ID, find its parent column
     const task = tasks.find(item => item._id === id);
     return task ? task.status : null;
   };
@@ -80,72 +88,67 @@ export const TaskBoard = ({ tasks: initialTasks, onTaskClick, onStatusChange }: 
     const activeId = active.id as string;
     const overId = over?.id as string;
 
-    if (!overId) return;
+    if (!overId || activeId === overId) return;
 
     const activeColumnId = findColumn(activeId);
     const overColumnId = findColumn(overId);
 
     if (!activeColumnId || !overColumnId || activeColumnId === overColumnId) {
-      return; // Not moving between different columns, or invalid columns
+      return; 
     }
 
-    // Handle moving between different columns (just append for now)
+    // Optimistic update for status change during dragOver
     setTasks(prevTasks => {
-      const activeTaskIndex = prevTasks.findIndex(task => task._id === activeId);
-      if (activeTaskIndex === -1) return prevTasks;
+        const taskToMove = prevTasks.find(t => t._id === activeId);
+        if (!taskToMove) return prevTasks;
 
-      const updatedTasks = [...prevTasks];
-      const [taskToMove] = updatedTasks.splice(activeTaskIndex, 1);
-      
-      if (taskToMove) {
-        // Only if the status is actually changing
         if (taskToMove.status !== overColumnId) {
-          taskToMove.status = overColumnId;
-          updatedTasks.push(taskToMove);
-          onStatusChange(activeId, overColumnId);
+            return prevTasks.map(t => 
+                t._id === activeId ? { ...t, status: overColumnId, position: 99999 } : t // Temporarily put at end
+            );
         }
-      }
-      return updatedTasks;
+        return prevTasks;
     });
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
     setActiveTask(null);
 
     if (!over) return;
 
-    const activeColumnId = findColumn(active.id as string);
+    const activeTaskId = active.id as string;
     const overColumnId = findColumn(over.id as string);
+    const initialTask = initialTasks.find(t => t._id === activeTaskId); // The task state BEFORE any dragOver changes
 
-    if (!activeColumnId || !overColumnId) return;
+    if (!initialTask || !overColumnId) return;
 
-    const activeItems = grouped[activeColumnId].map(task => task._id);
-    const overItems = grouped[overColumnId].map(task => task._id);
+    const oldStatus = initialTask.status;
+    const newStatus = overColumnId;
 
-    const activeIndex = activeItems.indexOf(active.id as string);
-    const overIndex = overItems.indexOf(over.id as string);
+    if (oldStatus !== newStatus) {
+      // Case 1: Status changed (moved to a different column)
+      onStatusChange(activeTaskId, newStatus); // This handles backend update and re-fetches data via SWR mutate in parent
+    } else {
+      // Case 2: Order changed within the same column
+      const tasksInColumn = grouped[newStatus];
+      const sortedUpdates = tasksInColumn.map((task, index) => ({
+        taskId: task._id,
+        position: index,
+        status: newStatus,
+      }));
 
-    // Same column sorting
-    if (activeColumnId === overColumnId) {
-      if (activeIndex !== -1 && overIndex !== -1) {
-        setTasks(prevTasks => {
-          const updatedColumnTasks = arrayMove(grouped[activeColumnId], activeIndex, overIndex);
-          // Create a new full tasks array, replacing the old column with the sorted one
-          return prevTasks.map(task => 
-            activeColumnId === task.status ? 
-              updatedColumnTasks.find(uc => uc._id === task._id) || task : 
-              task
-          ).filter(Boolean) as Task[];
-        });
-      }
-    } else { // Moving to a different column (already handled in dragOver if status changed)
-        // If status wasn't changed in dragOver (e.g. dropped on empty column, or new task to move)
-        const taskToMove = tasks.find(t => t._id === active.id);
-        if (taskToMove && taskToMove.status !== overColumnId) {
-            onStatusChange(active.id as string, overColumnId);
+      if (token && sortedUpdates.length > 0) {
+        try {
+          await Api.reorderTasks(token, sortedUpdates);
+          // No need to call mutate() here, the parent will revalidate implicitly or manually.
+        } catch (error) {
+          console.error('Failed to reorder tasks in backend', error);
+          setTasks(initialTasks); // Revert to initial state on error
+          alert('Failed to save task order. Please try again.');
         }
+      }
     }
   };
 

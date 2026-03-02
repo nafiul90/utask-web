@@ -17,6 +17,7 @@ async function request<T = any>(path: string, options: RequestInit = {}) {
 }
 
 export const Api = {
+  request,
   signup: (payload: Record<string, unknown>) =>
     request<{ token: string; user: any }>('/auth/signup', {
       method: 'POST',
@@ -110,10 +111,32 @@ export const Api = {
       body: JSON.stringify({ content }),
       headers: { Authorization: `Bearer ${token}` }
     }),
+  updateComment: (token: string, taskId: string, commentId: string, content: string) =>
+    request(`/tasks/${taskId}/comments/${commentId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  deleteComment: (token: string, taskId: string, commentId: string) =>
+    request(`/tasks/${taskId}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    }),
   replyToComment: (token: string, taskId: string, commentId: string, content: string) =>
     request(`/tasks/${taskId}/comments/${commentId}/replies`, {
       method: 'POST',
       body: JSON.stringify({ content }),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  updateReply: (token: string, taskId: string, commentId: string, replyId: string, content: string) =>
+    request(`/tasks/${taskId}/comments/${commentId}/replies/${replyId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  deleteReply: (token: string, taskId: string, commentId: string, replyId: string) =>
+    request(`/tasks/${taskId}/comments/${commentId}/replies/${replyId}`, {
+      method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })
 };

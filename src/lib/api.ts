@@ -156,5 +156,35 @@ export const Api = {
     request(`/tasks/${taskId}/comments/${commentId}/replies/${replyId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
+    }),
+  // Notification APIs
+  getNotifications: (token: string, limit?: number, skip?: number, unreadOnly?: boolean) => {
+    const params = new URLSearchParams();
+    if (limit) params.set('limit', limit.toString());
+    if (skip) params.set('skip', skip.toString());
+    if (unreadOnly) params.set('unreadOnly', unreadOnly.toString());
+    const queryString = params.toString();
+    return request(`/notifications${queryString ? '?' + queryString : ''}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+  getNotificationStats: (token: string) =>
+    request('/notifications/stats', {
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  markNotificationAsRead: (token: string, notificationId: string) =>
+    request(`/notifications/${notificationId}/read`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  markAllNotificationsAsRead: (token: string) =>
+    request('/notifications/read-all', {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+  deleteNotification: (token: string, notificationId: string) =>
+    request(`/notifications/${notificationId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
     })
 };

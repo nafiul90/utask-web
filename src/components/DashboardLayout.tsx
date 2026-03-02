@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { Avatar } from './Avatar';
 import { Menu, X } from 'lucide-react';
+import { NotificationButton } from './notifications/NotificationButton';
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, logout } = useAuth();
@@ -35,6 +36,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
               </Link>
             ))}
             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+              <NotificationButton />
               <Avatar src={user?.profilePicture} alt={user?.fullName} size={32} />
               <button onClick={logout} className="rounded-full border border-white/10 px-3 py-1 text-xs hover:text-rose-400 transition">
                 Logout

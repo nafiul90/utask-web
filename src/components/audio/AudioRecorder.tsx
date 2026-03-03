@@ -67,7 +67,7 @@ export const AudioRecorder = ({ token, onUpload, disabled, taskId }: AudioRecord
       if (taskId) {
               // Task-specific
         const formData = new FormData();
-        formData.append('audio', audioFile);
+        formData.append('file', audioFile);
         const res = await fetch(`/api/tasks/${taskId}/attachments/audio`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },

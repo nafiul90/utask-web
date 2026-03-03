@@ -75,7 +75,7 @@ export const AudioPlayer = ({ src, filename, onDelete, canDelete }: AudioPlayerP
           <Trash2 size={18} />
         </button>
       )}
-      <audio ref={audioRef} src={src} type="audio/webm" preload="metadata" className="hidden" />
+      <audio ref={audioRef} src={"https://api.task.urelaa.com/uploads/recording-1772561752013-242097051.webm"} preload="metadata" className="hidden" />
     </div>
   );
 };

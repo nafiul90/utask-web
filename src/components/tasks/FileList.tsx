@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { FileText, Trash2, Download, Eye } from 'lucide-react';
-import Image from 'next/image';
-import { AudioPlayer } from '../AudioPlayer';
+import { FileText, Trash2, Download, Eye } from "lucide-react";
+import Image from "next/image";
+import { AudioPlayer } from "../AudioPlayer";
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9052/api';
-const assetHost = apiBase.replace(/\/api$/, '');
+const apiBase =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.task.urelaa.com/api";
+const assetHost = apiBase.replace(/\/api$/, "");
 
 interface Attachment {
   path: string;
@@ -27,30 +28,34 @@ export const FileList = ({ files, onRemove, readOnly }: FileListProps) => {
   return (
     <div className="grid gap-3 sm:grid-cols-2 mt-2">
       {files.map((file, index) => {
-        const isImage = file.mimeType?.startsWith('image/');
-        const isAudio = file.mimeType?.startsWith('audio/');
+        const isImage = file.mimeType?.startsWith("image/");
+        const isAudio = file.mimeType?.startsWith("audio/");
         const fileUrl = `${assetHost}${file.path}`;
+        console.log("file url: ", fileUrl, file.originalName || file.filename);
         if (isAudio) {
-            return (
-                <AudioPlayer
-                  key={index} 
-                  src={fileUrl}
-                  filename={file.originalName || file.filename}
-                  onDelete={() => onRemove(index)}
-                  canDelete={!readOnly}
-                 />
-            );
+          return (
+            <AudioPlayer
+              key={index}
+              src={fileUrl}
+              filename={file.originalName || file.filename}
+              onDelete={() => onRemove!(index)}
+              canDelete={!readOnly}
+            />
+          );
         }
         return (
-          <div key={index} className="group relative flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 overflow-hidden transition hover:bg-white/10">
+          <div
+            key={index}
+            className="group relative flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 overflow-hidden transition hover:bg-white/10"
+          >
             {/* Thumbnail / Icon */}
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-black/20 border border-white/5">
               {isImage ? (
-                <Image 
-                  src={fileUrl} 
-                  alt={file.originalName || 'Image'} 
-                  fill 
-                  className="object-cover" 
+                <Image
+                  src={fileUrl}
+                  alt={file.originalName || "Image"}
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
@@ -61,22 +66,29 @@ export const FileList = ({ files, onRemove, readOnly }: FileListProps) => {
 
             {/* Info */}
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-white" title={file.originalName}>{file.originalName || file.filename}</p>
-              <p className="text-xs text-slate-500">{(file.size ? file.size / 1024 : 0).toFixed(1)} KB</p>
+              <p
+                className="truncate text-sm font-medium text-white"
+                title={file.originalName}
+              >
+                {file.originalName || file.filename}
+              </p>
+              <p className="text-xs text-slate-500">
+                {(file.size ? file.size / 1024 : 0).toFixed(1)} KB
+              </p>
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-1">
-              <a 
-                href={fileUrl} 
-                target="_blank" 
+              <a
+                href={fileUrl}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="rounded p-1.5 text-slate-400 hover:bg-white/10 hover:text-white transition"
                 title={isImage ? "Preview" : "Download"}
               >
-                {isImage ? <Eye size={16} /> : <Download size={16} /> }
+                {isImage ? <Eye size={16} /> : <Download size={16} />}
               </a>
-              
+
               {!readOnly && onRemove && (
                 <button
                   type="button"

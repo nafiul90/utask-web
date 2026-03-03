@@ -8,9 +8,10 @@ interface AudioRecorderProps {
   token: string;
   onUpload: (attachment: any) => void;
   disabled?: boolean;
+  taskId?: string
 }
 
-const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled }) => {
+const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled, taskId }) => {
   const [recording, setRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -57,8 +58,25 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled
     setUploading(true);
     try {
       const audioFile = new File([recordedAudio], "task-audio-recording.webm", { type: "audio/webm" });
-      const uploaded = await Api.uploadFile(token, audioFile);
-      onUpload(uploaded);
+      // const uploaded = await Api.uploadFile(token, audioFile);
+      // onUpload(uploaded);
+      if (taskId) {
+        // Task-specific
+        const formData = new FormData();
+        formData.append('audio', audioFile);
+        const res = await fetch(`/api/tasks/${taskId}/attachments/audio`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        const data = await res.json();
+        onUpload(data.attachment);
+      } else {
+        // General for create
+        const uploaded = await Api.uploadFile(token, audioFile);
+        onUpload(uploaded);
+      }
+
       setRecordedAudio(null);
       audioUrlRef.current = null;
     } catch (err) {

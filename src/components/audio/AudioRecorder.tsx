@@ -8,9 +8,10 @@ interface AudioRecorderProps {
   token: string;
   onUpload: (file: any) => void;
   disabled?: boolean;
+  taskId?: string
 }
 
-export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps) => {
+export const AudioRecorder = ({ token, onUpload, disabled, taskId }: AudioRecorderProps) => {
   const [recording, setRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -61,8 +62,24 @@ export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps)
 
     const audioFile = new File([recordedAudio], 'recording.webm', { type: 'audio/webm' });
     try {
-      const uploaded = await Api.uploadFile(token, audioFile);
-      onUpload(uploaded);
+      // const uploaded = await Api.uploadFile(token, audioFile);
+      // onUpload(uploaded);
+      if (taskId) {
+              // Task-specific
+        const formData = new FormData();
+        formData.append('audio', audioFile);
+        const res = await fetch(`/api/tasks/${taskId}/attachments/audio`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        const data = await res.json();
+        onUpload(data.attachment);
+      } else {
+        // General for create
+        const uploaded = await Api.uploadFile(token, audioFile);
+        onUpload(uploaded);
+      }
       setRecordedAudio(null);
       audioUrlRef.current = null;
     } catch (error) {

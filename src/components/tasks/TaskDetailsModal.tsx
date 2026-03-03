@@ -191,7 +191,7 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
                     <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} disabled={saving} />
                     <div className="mt-4">
                       <label className="mb-2 block text-sm text-slate-300 font-medium">🎙️ Record Audio Note</label>
-                      <AudioRecorder token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
+                      <AudioRecorder token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} taskId = {taskId} />
                     </div>
                     <FileList files={attachments} onRemove={handleRemoveFile} readOnly={saving} />
                   </div>

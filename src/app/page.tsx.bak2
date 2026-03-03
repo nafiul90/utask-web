@@ -14,34 +14,67 @@ export default function DashboardPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Dashboard: user=', user, 'token=', token ? 'present' : 'missing');
+  }, [user, token]);
+
   const { data: dashboardResponse, error } = useSWR(
     token ? ['taskStats', token, startDate, endDate] : null,
-    ([_, t, start, end]) => Api.getTaskStats(t, start, end)
+    ([_, t, start, end]) => {
+      console.log('Fetching task stats with token:', t ? 'present' : 'missing');
+      return Api.getTaskStats(t, start, end);
+    }
   );
 
-  // Convert API response
+  // Debug logging for API response
+  useEffect(() => {
+    if (dashboardResponse) {
+      console.log('Dashboard response:', dashboardResponse);
+      console.log('byStatus:', dashboardResponse.byStatus);
+      console.log('totals:', dashboardResponse.totals);
+    }
+    if (error) {
+      console.error('Dashboard error:', error);
+    }
+  }, [dashboardResponse, error]);
+
+  // Convert the new API response format to the expected format
+  // Backend returns: { byStatus: [{status, count, totalHours}, ...], totals: {total, completed, overdue, completionRate} }
   const byStatus = dashboardResponse?.byStatus || [];
   const totals = dashboardResponse?.totals || { total: 0, completed: 0, overdue: 0, completionRate: 0 };
-  const userStats = dashboardResponse?.users || [] ; // test edit
-
+  
+  // Convert byStatus array to globalStats object
   const globalStats = {
     total: totals.total || 0,
     pending: byStatus.find(s => s.status === 'pending')?.count || 0,
     processing: byStatus.find(s => s.status === 'processing')?.count || 0,
     qa: byStatus.find(s => s.status === 'qa')?.count || 0,
-    completed: totals.completed || 0,
+    completed: totals.completed || 0, // Use totals.completed instead of byStatus
     canceled: byStatus.find(s => s.status === 'canceled')?.count || 0,
   };
+  
+  console.log('Processed globalStats:', globalStats);
 
+  const userStats = dashboardResponse?.users || [];
   const statItems = [
+  const userStats = dashboardResponse?.users || [];
     { label: 'Total Tasks', value: globalStats.total, color: 'text-blue-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'Pending', value: globalStats.pending, color: 'text-yellow-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'In Progress', value: globalStats.processing, color: 'text-purple-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'QA', value: globalStats.qa, color: 'text-teal-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'Completed', value: globalStats.completed, color: 'text-green-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'Canceled', value: globalStats.canceled, color: 'text-red-400' },
+  const userStats = dashboardResponse?.users || [];
   ];
+  const userStats = dashboardResponse?.users || [];
 
+  const userStats = dashboardResponse?.users || [];
   return (
     <ProtectedPage>
       <DashboardLayout>
@@ -72,8 +105,11 @@ export default function DashboardPage() {
         {/* Overall Task Summary */}
         <section className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300 mb-6">
           <p className="text-xl font-semibold text-white mb-4">Overall Task Summary</p>
+          
           {error ? (
-            <div className="text-rose-400 text-center py-8">Failed to load task statistics: {error.message || error}</div>
+            <div className="text-rose-400 text-center py-8">
+              Failed to load task statistics: {error.message}
+            </div>
           ) : !dashboardResponse ? (
             <div className="text-slate-400 text-center py-8">
               {token ? 'Loading overall task statistics...' : 'Please log in to see task statistics'}
@@ -90,7 +126,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* Team Member Task Breakdown */}
+        {/* Per-User Task Stats - Temporarily disabled as new API doesn't return user stats */}
         <section className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300 mb-6">
           <p className="text-xl font-semibold text-white mb-4">Team Member Task Breakdown</p>
           {error ? (
@@ -121,13 +157,14 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
-
+        
         <div className="text-sm text-slate-400 text-center py-4">
           <p>Need to review your details? Head to your profile page.</p>
           <Link href="/profile" className="text-rose-300 hover:text-rose-200 mt-1 block">
             Go to profile →
           </Link>
         </div>
+
       </DashboardLayout>
     </ProtectedPage>
   );

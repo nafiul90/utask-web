@@ -11,6 +11,7 @@ import { FileList } from './FileList';
 import { CommentItem } from './CommentItem';
 import { LinkInput } from './LinkInput';
 import { LinkList } from './LinkList';
+import { AudioRecorder } from '../audio/AudioRecorder';
 
 type User = { id: string; fullName: string; role: string };
 
@@ -188,6 +189,10 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
                   <div>
                     <label className="mb-1 block text-sm text-slate-300">Attachments</label>
                     <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} disabled={saving} />
+                    <div className="mt-4">
+                      <label className="mb-2 block text-sm text-slate-300 font-medium">🎙️ Record Audio Note</label>
+                      <AudioRecorder token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
+                    </div>
                     <FileList files={attachments} onRemove={handleRemoveFile} readOnly={saving} />
                   </div>
 

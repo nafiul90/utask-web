@@ -7,7 +7,6 @@ import { Api } from '../../lib/api';
 import { FileUploader } from './FileUploader';
 import { FileList } from './FileList';
 import { LinkInput } from './LinkInput';
-import { AudioRecorder } from '../audio/AudioRecorder';
 import { LinkList } from './LinkList';
 
 type User = { id: string; fullName: string };
@@ -117,10 +116,6 @@ export const TaskFormModal = ({ token, onClose, onSuccess }: TaskFormModalProps)
             <label className="mb-1 block text-sm text-slate-300">Attachments</label>
             <FileUploader token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
             <FileList files={attachments} onRemove={handleRemoveFile} />
-            <div className="mt-6">
-              <label className="mb-2 block text-sm text-slate-300 font-medium">🎙️ Record Audio Note</label>
-              <AudioRecorder token={token} onUpload={(file) => setAttachments(prev => [...prev, file])} />
-            </div>
           </div>
 
           <div>

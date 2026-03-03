@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
       { protocol: 'http', hostname: '154.26.131.31' },
       { protocol: 'https', hostname: '154.26.131.31' },
       { protocol: 'http', hostname: 'localhost' },
-      { protocol: 'https', hostname: 'example.com' },
-      { protocol: 'http', hostname: 'example.com' }
+      { protocol: 'https', hostname: 'api.task.urelaa.com' },
+      { protocol: 'http', hostname: 'api.task.urelaa.com' }
     ]
   }
 };

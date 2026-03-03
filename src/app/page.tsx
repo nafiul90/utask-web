@@ -56,15 +56,25 @@ export default function DashboardPage() {
   
   console.log('Processed globalStats:', globalStats);
 
+  const userStats = dashboardResponse?.users || [];
   const statItems = [
+  const userStats = dashboardResponse?.users || [];
     { label: 'Total Tasks', value: globalStats.total, color: 'text-blue-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'Pending', value: globalStats.pending, color: 'text-yellow-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'In Progress', value: globalStats.processing, color: 'text-purple-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'QA', value: globalStats.qa, color: 'text-teal-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'Completed', value: globalStats.completed, color: 'text-green-400' },
+  const userStats = dashboardResponse?.users || [];
     { label: 'Canceled', value: globalStats.canceled, color: 'text-red-400' },
+  const userStats = dashboardResponse?.users || [];
   ];
+  const userStats = dashboardResponse?.users || [];
 
+  const userStats = dashboardResponse?.users || [];
   return (
     <ProtectedPage>
       <DashboardLayout>

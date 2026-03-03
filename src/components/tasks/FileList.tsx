@@ -2,6 +2,7 @@
 
 import { FileText, Trash2, Download, Eye } from 'lucide-react';
 import Image from 'next/image';
+import { AudioPlayer } from '../AudioPlayer';
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9052/api';
 const assetHost = apiBase.replace(/\/api$/, '');
@@ -27,8 +28,19 @@ export const FileList = ({ files, onRemove, readOnly }: FileListProps) => {
     <div className="grid gap-3 sm:grid-cols-2 mt-2">
       {files.map((file, index) => {
         const isImage = file.mimeType?.startsWith('image/');
+        const isAudio = file.mimeType?.startsWith('audio/');
         const fileUrl = `${assetHost}${file.path}`;
-
+        if (isAudio) {
+            return (
+                <AudioPlayer
+                  key={index} 
+                  src={fileUrl}
+                  filename={file.originalName || file.filename}
+                  onDelete={() => onRemove(index)}
+                  canDelete={!readOnly}
+                 />
+            );
+        }
         return (
           <div key={index} className="group relative flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 overflow-hidden transition hover:bg-white/10">
             {/* Thumbnail / Icon */}

@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import useSWR from 'swr';
 import { Api } from '../lib/api';
 import Link from 'next/link';
-import Avatar from '../components/Avatar';
+import { Avatar } from '../components/Avatar';
 
 export default function DashboardPage() {
   const { user, token } = useAuth();

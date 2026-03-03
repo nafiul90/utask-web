@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import useSWR from 'swr';
 import { Api } from '../lib/api';
 import Link from 'next/link';
+import Avatar from '../components/Avatar';
 
 export default function DashboardPage() {
   const { user, token } = useAuth();
@@ -118,11 +119,33 @@ export default function DashboardPage() {
         {/* Per-User Task Stats - Temporarily disabled as new API doesn't return user stats */}
         <section className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300 mb-6">
           <p className="text-xl font-semibold text-white mb-4">Team Member Task Breakdown</p>
-          <div className="text-slate-500 text-center py-8 italic">
-            User task breakdown is not available in the current API version. 
-            <br />
-            <span className="text-sm">The new API returns task statistics by status only.</span>
-          </div>
+          {error ? (
+            <div className="text-rose-400 text-center py-8">Failed to load user task breakdown.</div>
+          ) : !dashboardResponse ? (
+            <div className="text-slate-400 text-center py-8">Loading user task breakdown...</div>
+          ) : userStats.length === 0 ? (
+            <div className="text-slate-500 text-center py-8 italic">No tasks assigned to team members in this period.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {userStats.map((userStat) => (
+                <div key={userStat.assignee._id || 'unassigned'} className="rounded-xl border border-white/5 bg-slate-900/40 p-4 flex items-center gap-4">
+                  <Avatar src={userStat.assignee?.profilePicture} alt={userStat.assignee?.fullName || 'Unassigned'} size={48} />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-white">{userStat.assignee.fullName}</h3>
+                    <p className="text-xs text-slate-500">{userStat.assignee.role || 'N/A'}</p>
+                    <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                      <span className="bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded">Total: {userStat.total}</span>
+                      <span className="bg-yellow-500/10 text-yellow-300 px-2 py-0.5 rounded">Pend: {userStat.pending}</span>
+                      <span className="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded">Proc: {userStat.processing}</span>
+                      <span className="bg-teal-500/10 text-teal-300 px-2 py-0.5 rounded">QA: {userStat.qa}</span>
+                      <span className="bg-green-500/10 text-green-300 px-2 py-0.5 rounded">Comp: {userStat.completed}</span>
+                      <span className="bg-red-500/10 text-red-300 px-2 py-0.5 rounded">Canc: {userStat.canceled}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
         
         <div className="text-sm text-slate-400 text-center py-4">

@@ -314,6 +314,20 @@ export const TaskDetailsModal = ({ token, taskId, onClose, onSuccess }: TaskDeta
         {/* Footer Actions */}
         {canEdit && (
           <div className="flex justify-end gap-3 px-6 py-4 border-t border-white/10 bg-slate-900/50 shrink-0">
+            {currentUser?.role === 'admin' && (
+              <button
+                onClick={async () => {
+                  if (confirm('Delete this task permanently?')) {
+                    await Api.deleteTask(token, taskId);
+                    onSuccess();
+                    onClose();
+                  }
+                }}
+                className="rounded-full border border-rose-500/50 bg-rose-500/10 px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/20 transition-all"
+              >
+                Delete Task
+              </button>
+            )}
             <button
               onClick={onClose}
               className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:border-white/30"

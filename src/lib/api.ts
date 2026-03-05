@@ -223,4 +223,8 @@ export const Api = {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     }),
+  getRecentComments: (token: string, limit = 10) =>
+    request(`/comments/recent?limit=${limit}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };

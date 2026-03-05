@@ -8,6 +8,7 @@ import useSWR from 'swr';
 import { Api } from '../lib/api';
 import Link from 'next/link';
 import { Avatar } from '../components/Avatar';
+import RecentComments from '../components/RecentComments';
 
 export default function DashboardPage() {
   const { user, token } = useAuth();
@@ -120,6 +121,11 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Recent Comments</h2>
+          <RecentComments />
         </section>
 
         <div className="text-sm text-slate-400 text-center py-4">

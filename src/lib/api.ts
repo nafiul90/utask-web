@@ -186,5 +186,9 @@ export const Api = {
     request(`/notifications/${notificationId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
+    }),
+  getRecentComments: (token: string, limit = 10) =>
+    request(`/comments/recent?limit=${limit}`, {
+      headers: { Authorization: `Bearer ${token}` }
     })
 };

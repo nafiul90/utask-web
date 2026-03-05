@@ -19,3 +19,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
+import { NotificationButton } from '../components/NotificationButton';

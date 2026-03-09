@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { Bell, Check, Trash2, Loader2 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { Api } from '../../lib/api';
+import { useState, useEffect, useRef } from "react";
+import { Bell, Check, Trash2, Loader2 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { Api } from "../../lib/api";
 
 interface Notification {
   _id: string;
   title: string;
   message: string;
-  type: 'task_assigned' | 'comment_added' | 'status_changed' | 'general';
+  type: "task_assigned" | "comment_added" | "status_changed" | "general";
   relatedTaskId?: {
     _id: string;
     title: string;
@@ -43,24 +43,49 @@ export const NotificationButton = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!navigator.serviceWorker) return;
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data?.type === "NEW_NOTIFICATION") {
+        console.log("Notification received:", event.data.payload);
+
+        playNotificationSound();
+        // update your notification state
+        fetchNotifications();
+        fetchStats();
+
+        // play sound
+      }
+    });
+  }, []);
+
+  const playNotificationSound = () => {
+    const audio = new Audio("/notification.mp3");
+    audio.play().catch(() => {});
+  };
 
   const fetchNotifications = async () => {
     if (!token) return;
-    
+
     try {
       setLoading(true);
       const data = await Api.getNotifications(token, 10, 0, false);
       setNotifications(data.notifications || []);
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+      console.error("Failed to fetch notifications:", error);
     } finally {
       setLoading(false);
     }
@@ -68,88 +93,96 @@ export const NotificationButton = () => {
 
   const fetchStats = async () => {
     if (!token) return;
-    
+
     try {
       const data = await Api.getNotificationStats(token);
       setStats(data);
     } catch (error) {
-      console.error('Failed to fetch notification stats:', error);
+      console.error("Failed to fetch notification stats:", error);
     }
   };
 
   const handleMarkAsRead = async (notificationId: string) => {
     if (!token) return;
-    
+
     try {
       await Api.markNotificationAsRead(token, notificationId);
-      
-      setNotifications(prev => prev.map(notif => 
-        notif._id === notificationId ? { ...notif, read: true } : notif
-      ));
-      
+
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif._id === notificationId ? { ...notif, read: true } : notif,
+        ),
+      );
+
       if (stats) {
         setStats({
           ...stats,
-          unread: Math.max(0, stats.unread - 1)
+          unread: Math.max(0, stats.unread - 1),
         });
       }
     } catch (error) {
-      console.error('Failed to mark notification as read:', error);
+      console.error("Failed to mark notification as read:", error);
     }
   };
 
   const handleMarkAllAsRead = async () => {
     if (!token) return;
-    
+
     try {
       await Api.markAllNotificationsAsRead(token);
-      
-      setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
-      
+
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, read: true })),
+      );
+
       if (stats) {
         setStats({
           ...stats,
-          unread: 0
+          unread: 0,
         });
       }
     } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
+      console.error("Failed to mark all notifications as read:", error);
     }
   };
 
   const handleDeleteNotification = async (notificationId: string) => {
     if (!token) return;
-    
+
     try {
       await Api.deleteNotification(token, notificationId);
-      
-      const notificationToDelete = notifications.find(n => n._id === notificationId);
+
+      const notificationToDelete = notifications.find(
+        (n) => n._id === notificationId,
+      );
       const wasUnread = notificationToDelete?.read === false;
-      
-      setNotifications(prev => prev.filter(notif => notif._id !== notificationId));
-      
+
+      setNotifications((prev) =>
+        prev.filter((notif) => notif._id !== notificationId),
+      );
+
       if (stats) {
         setStats({
           ...stats,
           total: stats.total - 1,
-          unread: wasUnread ? Math.max(0, stats.unread - 1) : stats.unread
+          unread: wasUnread ? Math.max(0, stats.unread - 1) : stats.unread,
         });
       }
     } catch (error) {
-      console.error('Failed to delete notification:', error);
+      console.error("Failed to delete notification:", error);
     }
   };
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'task_assigned':
-        return '📋';
-      case 'comment_added':
-        return '💬';
-      case 'status_changed':
-        return '🔄';
+      case "task_assigned":
+        return "📋";
+      case "comment_added":
+        return "💬";
+      case "status_changed":
+        return "🔄";
       default:
-        return '📢';
+        return "📢";
     }
   };
 
@@ -182,7 +215,7 @@ export const NotificationButton = () => {
         <Bell size={20} className="text-slate-300" />
         {stats && stats.unread > 0 && (
           <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            {stats.unread > 9 ? '9+' : stats.unread}
+            {stats.unread > 9 ? "9+" : stats.unread}
           </span>
         )}
       </button>
@@ -223,7 +256,7 @@ export const NotificationButton = () => {
                 {notifications.map((notification) => (
                   <div
                     key={notification._id}
-                    className={`p-4 hover:bg-white/5 transition-colors ${!notification.read ? 'bg-slate-800/50' : ''}`}
+                    className={`p-4 hover:bg-white/5 transition-colors ${!notification.read ? "bg-slate-800/50" : ""}`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="text-xl mt-1">
@@ -259,7 +292,9 @@ export const NotificationButton = () => {
                         </button>
                       )}
                       <button
-                        onClick={() => handleDeleteNotification(notification._id)}
+                        onClick={() =>
+                          handleDeleteNotification(notification._id)
+                        }
                         className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
                       >
                         <Trash2 size={12} />

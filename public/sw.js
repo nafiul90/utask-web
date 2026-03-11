@@ -4,13 +4,14 @@ self.addEventListener("push", function (event) {
 
   const data = JSON.parse(event.data.text());
 
-  console.log("data", data);
   const options = {
     body: data.message || "A new notification",
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
     data: {
-      url: data.taskId ? `/tasks/${data.taskId}` : "/dashboard",
+      url: data.taskId
+        ? `/tasks?taskId=${data.taskId}${data.commentId ? `&commentId=${data.commentId}` : ""}`
+        : "/dashboard",
     },
   };
 

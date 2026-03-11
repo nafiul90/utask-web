@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Bell, Check, Trash2, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Api } from "../../lib/api";
+import Link from "next/link";
 
 interface Notification {
   _id: string;
@@ -15,6 +16,7 @@ interface Notification {
     title: string;
     status: string;
   };
+  commentId?: string;
   read: boolean;
   createdAt: string;
 }
@@ -185,6 +187,24 @@ export const NotificationButton = () => {
         return "📢";
     }
   };
+  const getUrl = (type: string, notification: Notification) => {
+    switch (type) {
+      case "task_assigned":
+        return `/tasks/${notification.relatedTaskId?._id}`;
+      case "comment_added":
+        return `/tasks/${notification.relatedTaskId?._id}?commentId=${notification.commentId}`;
+      case "comment_updated":
+        return `/tasks/${notification.relatedTaskId?._id}?commentId=${notification.commentId}`;
+      case "repply_added":
+        return `/tasks/${notification.relatedTaskId?._id}?commentId=${notification.commentId}`;
+      case "repply_updated":
+        return `/tasks/${notification.relatedTaskId?._id}?commentId=${notification.commentId}`;
+      case "status_changed":
+        return `/tasks/${notification.relatedTaskId?._id}`;
+      default:
+        return "📢";
+    }
+  };
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -221,7 +241,7 @@ export const NotificationButton = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-96 bg-slate-900 border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+        <div className="absolute right-[-70px] md:right-0 top-full mt-2 w-screen md:w-96 bg-slate-900 border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
           <div className="p-4 border-b border-white/10 flex items-center justify-between">
             <div>
               <h3 className="font-semibold text-white">Notifications</h3>
@@ -254,54 +274,60 @@ export const NotificationButton = () => {
             ) : (
               <div className="divide-y divide-white/5">
                 {notifications.map((notification) => (
-                  <div
+                  <Link
                     key={notification._id}
-                    className={`p-4 hover:bg-white/5 transition-colors ${!notification.read ? "bg-slate-800/50" : ""}`}
+                    href={getUrl(notification.type, notification)}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="text-xl mt-1">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-medium text-white truncate">
-                            {notification.title}
-                          </h4>
-                          <span className="text-xs text-slate-500 whitespace-nowrap">
-                            {formatTime(notification.createdAt)}
-                          </span>
+                    <div
+                      key={notification._id}
+                      className={`p-4 hover:bg-white/5 transition-colors ${!notification.read ? "bg-slate-800/50" : ""}`}
+                      // onClick={() => window.location.reload()}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="text-xl mt-1">
+                          {getNotificationIcon(notification.type)}
                         </div>
-                        <p className="text-sm text-slate-300 mt-1">
-                          {notification.message}
-                        </p>
-                        {notification.relatedTaskId && (
-                          <div className="mt-2 text-xs text-slate-400">
-                            Task: {notification.relatedTaskId.title}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="font-medium text-white truncate">
+                              {notification.title}
+                            </h4>
+                            <span className="text-xs text-slate-500 whitespace-nowrap">
+                              {formatTime(notification.createdAt)}
+                            </span>
                           </div>
+                          <p className="text-sm text-slate-300 mt-1">
+                            {notification.message}
+                          </p>
+                          {notification.relatedTaskId && (
+                            <div className="mt-2 text-xs text-slate-400">
+                              Task: {notification.relatedTaskId.title}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-3">
+                        {!notification.read && (
+                          <button
+                            onClick={() => handleMarkAsRead(notification._id)}
+                            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
+                          >
+                            <Check size={12} />
+                            Mark as read
+                          </button>
                         )}
+                        <button
+                          onClick={() =>
+                            handleDeleteNotification(notification._id)
+                          }
+                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
+                        >
+                          <Trash2 size={12} />
+                          Delete
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-3">
-                      {!notification.read && (
-                        <button
-                          onClick={() => handleMarkAsRead(notification._id)}
-                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
-                        >
-                          <Check size={12} />
-                          Mark as read
-                        </button>
-                      )}
-                      <button
-                        onClick={() =>
-                          handleDeleteNotification(notification._id)
-                        }
-                        className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
-                      >
-                        <Trash2 size={12} />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

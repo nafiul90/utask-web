@@ -28,6 +28,10 @@ export default function TasksPage() {
     searchParams.get("startDate") || "",
   );
   const [endDate, setEndDate] = useState(searchParams.get("endDate") || "");
+  const [taskId, setTaskId] = useState(searchParams.get("taskId") || "");
+  const [commentId, setCommentId] = useState(
+    searchParams.get("commentId") || "",
+  );
   const [showFilters, setShowFilters] = useState(false);
 
   // Fetch data from backend with query params
@@ -36,6 +40,8 @@ export default function TasksPage() {
     ...(selectedAssignee && { assignee: selectedAssignee }),
     ...(startDate && { startDate }),
     ...(endDate && { endDate }),
+    ...(taskId && { taskId }),
+    ...(commentId && { commentId }),
   }).toString();
 
   const {
@@ -60,7 +66,6 @@ export default function TasksPage() {
     if (selectedAssignee) params.set("assignee", selectedAssignee);
     if (startDate) params.set("startDate", startDate);
     if (endDate) params.set("endDate", endDate);
-
     const newUrl = `/tasks${params.toString() ? "?" + params.toString() : ""}`;
     // Only replace state if the URL actually changes to prevent unnecessary history entries
     if (
@@ -70,6 +75,13 @@ export default function TasksPage() {
       router.replace(newUrl);
     }
   }, [searchQuery, selectedAssignee, startDate, endDate, router]);
+
+  useEffect(() => {
+    console.log("useeffect called");
+    if (taskId) {
+      setSelectedTaskId(taskId);
+    }
+  }, [searchParams.get("taskId")]);
 
   const canCreate = user?.role === "admin" || user?.role === "manager";
 
@@ -96,6 +108,8 @@ export default function TasksPage() {
     setSelectedAssignee("");
     setStartDate("");
     setEndDate("");
+    setTaskId("");
+    setCommentId("");
   };
 
   const activeFilterCount = [
@@ -244,10 +258,12 @@ export default function TasksPage() {
 
           {selectedTaskId && token && (
             <TaskDetailsModal
+              key={selectedTaskId}
               token={token}
               taskId={selectedTaskId}
               onClose={() => setSelectedTaskId(null)}
               onSuccess={() => mutate()}
+              commentId={commentId}
             />
           )}
         </div>

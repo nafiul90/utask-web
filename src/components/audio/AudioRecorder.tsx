@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useRef, useCallback } from 'react';
-import { Mic, StopCircle, Play, Upload } from 'lucide-react';
-import { Api } from '../../lib/api';
+import { useState, useRef, useCallback } from "react";
+import { Mic, StopCircle, Play, Upload } from "lucide-react";
+import { Api } from "../../lib/api";
+import { AudioPlayer } from "react-video-audio-player";
 
 interface AudioRecorderProps {
   token: string;
@@ -10,7 +11,11 @@ interface AudioRecorderProps {
   disabled?: boolean;
 }
 
-export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps) => {
+export const AudioRecorder = ({
+  token,
+  onUpload,
+  disabled,
+}: AudioRecorderProps) => {
   const [recording, setRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -21,23 +26,25 @@ export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps)
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm",
+      });
       mediaRecorderRef.current = mediaRecorder;
 
       const chunks: BlobPart[] = [];
       mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: "audio/webm" });
         setRecordedAudio(blob);
         audioUrlRef.current = URL.createObjectURL(blob);
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
       setRecording(true);
     } catch (error) {
-      console.error('Recording failed:', error);
-      alert('Microphone access denied or not available');
+      console.error("Recording failed:", error);
+      alert("Microphone access denied or not available");
     }
   };
 
@@ -59,15 +66,17 @@ export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps)
   const uploadRecording = async () => {
     if (!recordedAudio) return;
 
-    const audioFile = new File([recordedAudio], 'recording.webm', { type: 'audio/webm' });
+    const audioFile = new File([recordedAudio], "recording.webm", {
+      type: "audio/webm",
+    });
     try {
       const uploaded = await Api.uploadFile(token, audioFile);
       onUpload(uploaded);
       setRecordedAudio(null);
       audioUrlRef.current = null;
     } catch (error) {
-      console.error('Upload failed:', error);
-      alert('Upload failed');
+      console.error("Upload failed:", error);
+      alert("Upload failed");
     }
   };
 
@@ -94,13 +103,20 @@ export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps)
         </button>
         {recordedAudio && (
           <>
-            <button
+            {/* <button
               type="button"
               onClick={playRecording}
               className="p-3 rounded-full bg-green-500/20 border border-green-500/40 hover:bg-green-500/30 transition text-green-300"
             >
               <Play size={20} />
-            </button>
+            </button> */}
+            <AudioPlayer
+              src={audioUrlRef.current!}
+              controls
+              accentColor="grey"
+              style={{ backgroundColor: "#0f1323", borderColor: "#616161ff" }}
+              className="border border-sm border-dashed rounded-xl"
+            />
             <button
               type="button"
               onClick={uploadRecording}
@@ -111,7 +127,11 @@ export const AudioRecorder = ({ token, onUpload, disabled }: AudioRecorderProps)
           </>
         )}
       </div>
-      <audio ref={audioRef} onEnded={() => setPlaying(false)} className="hidden" />
+      <audio
+        ref={audioRef}
+        onEnded={() => setPlaying(false)}
+        className="hidden"
+      />
     </div>
   );
 };

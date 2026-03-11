@@ -46,3 +46,20 @@ select {
   background-color: #1e293b !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+.rhap_container {
+  background: #111827;
+  color: white;
+}
+
+.rhap_progress-filled {
+  background: #3b82f6;
+}
+
+.rhap_progress-indicator {
+  background: #3b82f6;
+}
+
+.rhap_volume-indicator {
+  background: #3b82f6;
+}

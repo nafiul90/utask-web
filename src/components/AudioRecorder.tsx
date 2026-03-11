@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import React, { useState, useRef, useCallback } from "react";
 import { Mic, StopCircle, Play, Upload, Circle } from "lucide-react";
 import { Api } from "../lib/api";
+import AudioPlayer from "react-h5-audio-player";
 
 interface AudioRecorderProps {
   token: string;
@@ -10,7 +11,11 @@ interface AudioRecorderProps {
   disabled?: boolean;
 }
 
-const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled }) => {
+const AudioRecorder: React.FC<AudioRecorderProps> = ({
+  token,
+  onUpload,
+  disabled,
+}) => {
   const [recording, setRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -21,7 +26,9 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm",
+      });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -30,7 +37,9 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
         audioUrlRef.current = URL.createObjectURL(audioBlob);
         setRecordedAudio(audioBlob);
         stream.getTracks().forEach((track) => track.stop());
@@ -40,7 +49,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled
       setRecording(true);
     } catch (err) {
       console.error("Recording failed:", err);
-      console.error("Mic denied - allow browser mic permission"); alert("Allow microphone permission in browser (lock icon) and try again");
+      console.error("Mic denied - allow browser mic permission");
+      alert("Allow microphone permission in browser (lock icon) and try again");
     }
   }, []);
 
@@ -56,7 +66,9 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled
 
     setUploading(true);
     try {
-      const audioFile = new File([recordedAudio], "task-audio-recording.webm", { type: "audio/webm" });
+      const audioFile = new File([recordedAudio], "task-audio-recording.webm", {
+        type: "audio/webm",
+      });
       const uploaded = await Api.uploadFile(token, audioFile);
       onUpload(uploaded);
       setRecordedAudio(null);
@@ -91,11 +103,22 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ token, onUpload, disabled
       </button>
 
       {recordedAudio && (
-        <div className="space-y-2 p-3 bg-white/5 rounded-lg">
-          <audio 
-            src={audioUrlRef.current!} 
-            controls 
+        <div
+          className="space-y-2 p-3 bg-white/5 rounded-lg"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          {/* <audio
+            src={audioUrlRef.current!}
+            controls
             className="w-full rounded border border-white/20"
+          /> */}
+          <AudioPlayer
+            src={audioUrlRef.current!}
+            // controls
+            // accentColor="grey"
+            style={{ backgroundColor: "#0f1323", borderColor: "#616161ff" }}
+            className="border border-sm border-dashed rounded-xl"
           />
           <button
             onClick={uploadRecording}

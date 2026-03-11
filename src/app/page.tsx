@@ -138,7 +138,7 @@ export default function DashboardPage() {
               No tasks assigned to team members in this period.
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {userStats.map((userStat: any) => (
                 <div
                   key={userStat.assignee._id || "unassigned"}
@@ -183,11 +183,15 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-6 mb-6">
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Recent Comments
-          </h2>
-          <RecentComments />
+        <section>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 mb-6">
+              <h2 className="text-xl font-semibold text-white mb-4">
+                Recent Comments
+              </h2>
+              <RecentComments />
+            </div>
+          </div>
         </section>
 
         <div className="text-sm text-slate-400 text-center py-4">

@@ -27,9 +27,9 @@ export const DashboardLayout = ({
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
       <header className="border-b border-white/10 bg-slate-900/60 px-6 py-4 backdrop-blur sticky top-0 z-40">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
+        <div className="mx-auto flex max-w-screen items-center justify-between">
           <Link href="/" className="text-lg font-semibold text-rose-400">
-            uTask
+            U Task Manager
           </Link>
 
           {/* Desktop Nav */}
@@ -45,11 +45,11 @@ export const DashboardLayout = ({
             ))}
             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
               <NotificationButton />
-              <Avatar
+              {/* <Avatar
                 src={user?.profilePicture}
                 alt={user?.fullName}
                 size={32}
-              />
+              /> */}
               <button
                 onClick={logout}
                 className="rounded-full border border-white/10 px-3 py-1 text-xs hover:text-rose-400 transition"
@@ -60,12 +60,15 @@ export const DashboardLayout = ({
           </nav>
 
           {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden p-2 text-slate-300"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex gap-2 md:hidden">
+            <NotificationButton />
+            <button
+              className="p-2 text-slate-300"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Nav Dropdown */}
@@ -102,7 +105,7 @@ export const DashboardLayout = ({
         )}
       </header>
 
-      <main className="mx-auto w-full max-w-5xl px-6 py-10 flex-1">
+      <main className="mx-auto w-full max-w-screen px-6 py-10 flex-1">
         {children}
       </main>
     </div>

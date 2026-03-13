@@ -104,17 +104,16 @@ export default function DashboardPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               {statItems.map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-xl border border-white/5 bg-slate-900/40 p-4 text-center"
-                >
-                  <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">
-                    {item.label}
-                  </p>
-                  <p className={`text-2xl font-semibold ${item.color}`}>
-                    {item.value}
-                  </p>
-                </div>
+                <Link key={item.label} href={"/tasks"}>
+                  <div className="rounded-xl border border-white/5 bg-slate-900/40 p-4 text-center">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">
+                      {item.label}
+                    </p>
+                    <p className={`text-2xl font-semibold ${item.color}`}>
+                      {item.value}
+                    </p>
+                  </div>
+                </Link>
               ))}
             </div>
           )}

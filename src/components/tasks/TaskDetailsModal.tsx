@@ -50,6 +50,7 @@ export const TaskDetailsModal = ({
   const [showAddLinkForm, setShowAddLinkForm] = useState(false); // State to control LinkInput form visibility
   const [commentText, setCommentText] = useState("");
   const [postingComment, setPostingComment] = useState(false);
+  let oldLinks = [];
 
   const {
     register,
@@ -73,6 +74,7 @@ export const TaskDetailsModal = ({
       });
       setAttachments(task.attachments || []);
       setLinks(task.links || []); // Initialize links state
+      oldLinks = task.links;
     }
   }, [task, reset, taskId]);
 
@@ -93,6 +95,24 @@ export const TaskDetailsModal = ({
       onSuccess();
       mutate();
       onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update task");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const onLinkSubmit = async (data: any) => {
+    try {
+      setSaving(true);
+      await Api.updateTaskLink(
+        token,
+        taskId,
+        data, // Include links in the update payload
+      );
+      onSuccess();
+      mutate();
     } catch (error) {
       console.error(error);
       alert("Failed to update task");
@@ -141,10 +161,10 @@ export const TaskDetailsModal = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-1 py-6">
       <div className="w-full max-w-6xl flex flex-col rounded-2xl border border-white/10 bg-slate-950 shadow-2xl max-h-[90vh] overflow-hidden">
         {/* Fixed Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-slate-900/50 shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/50 shrink-0">
           <h2 className="text-xl font-semibold text-white">
             {canEdit ? "Edit Task" : "Task Details"}
           </h2>
@@ -160,7 +180,7 @@ export const TaskDetailsModal = ({
         <div className="flex-1 overflow-y-auto">
           <div className="flex flex-col lg:flex-row">
             {/* Task Section */}
-            <div className="flex-1 p-6 lg:border-r border-white/10 h-fit lg:min-h-full">
+            <div className="flex-1 p-4 lg:border-r border-white/10 h-fit lg:min-h-full">
               {canEdit ? (
                 <form
                   key={taskId}
@@ -181,7 +201,7 @@ export const TaskDetailsModal = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="mb-1 block text-sm text-slate-400">
                         Assignee
@@ -370,8 +390,17 @@ export const TaskDetailsModal = ({
                     <label className="mb-1 block text-sm text-slate-400">
                       Links
                     </label>
-                    {task.links?.length > 0 ? (
-                      <LinkList links={task.links} readOnly />
+                    <LinkInput
+                      onAdd={(link) => {
+                        setLinks((prev) => [...prev, link]);
+                        onLinkSubmit(link);
+                      }}
+                      showAddForm={showAddLinkForm}
+                      onToggleAddForm={setShowAddLinkForm}
+                      disabled={saving} // Disable when parent form is saving
+                    />
+                    {links.length > 0 ? (
+                      <LinkList links={links} readOnly />
                     ) : (
                       <p className="text-sm text-slate-500">No links.</p>
                     )}

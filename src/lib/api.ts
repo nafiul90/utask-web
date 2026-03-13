@@ -104,6 +104,16 @@ export const Api = {
       body: JSON.stringify(payload),
       headers: { Authorization: `Bearer ${token}` },
     }),
+  updateTaskLink: (
+    token: string,
+    id: string,
+    payload: Record<string, unknown>,
+  ) =>
+    request(`/tasks-link/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+      headers: { Authorization: `Bearer ${token}` },
+    }),
   updateTaskStatus: (token: string, id: string, status: string) =>
     request(`/tasks/${id}/status`, {
       method: "PATCH",

@@ -317,9 +317,10 @@ export const NotificationButton = () => {
                           </button>
                         )}
                         <button
-                          onClick={() =>
-                            handleDeleteNotification(notification._id)
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteNotification(notification._id);
+                          }}
                           className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
                         >
                           <Trash2 size={12} />

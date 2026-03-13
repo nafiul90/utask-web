@@ -134,7 +134,7 @@ export const CommentItem = ({
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="text-xs text-rose-400 hover:text-rose-300"
+                  className="text-xs text-primary-400 hover:text-primary-300"
                 >
                   <DeleteIcon size={15} />
                 </button>
@@ -160,7 +160,7 @@ export const CommentItem = ({
                 <button
                   onClick={handleUpdate}
                   disabled={loading}
-                  className="text-xs text-rose-400 hover:text-rose-300 disabled:opacity-50"
+                  className="text-xs text-primary-400 hover:text-primary-300 disabled:opacity-50"
                 >
                   Save
                 </button>
@@ -195,13 +195,13 @@ export const CommentItem = ({
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
               placeholder="Write a reply..."
-              className="flex-1 rounded-lg border border-white/10 bg-slate-950 px-3 py-1.5 text-xs text-white focus:border-rose-400 focus:outline-none"
+              className="flex-1 rounded-lg border border-white/10 bg-slate-950 px-3 py-1.5 text-xs text-white focus:border-primary-400 focus:outline-none"
               autoFocus
             />
             <button
               type="submit"
               disabled={loading || !replyContent.trim()}
-              className="rounded-lg bg-rose-500 px-3 py-1 text-xs font-medium text-white hover:bg-rose-400 disabled:opacity-50"
+              className="rounded-lg bg-primary-500 px-3 py-1 text-xs font-medium text-white hover:bg-primary-400 disabled:opacity-50"
             >
               Reply
             </button>

@@ -91,11 +91,11 @@ export const TaskFormModal = ({
             <label className="mb-1 block text-sm text-slate-300">Title</label>
             <input
               {...register("title", { required: "Title is required" })}
-              className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+              className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
               placeholder="Task title"
             />
             {errors.title && (
-              <p className="text-xs text-rose-400 mt-1">
+              <p className="text-xs text-primary-400 mt-1">
                 {errors.title.message}
               </p>
             )}
@@ -108,7 +108,7 @@ export const TaskFormModal = ({
               </label>
               <select
                 {...register("assignee")}
-                className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
               >
                 <option value="">Unassigned</option>
                 {users?.map((u: User) => (
@@ -125,10 +125,10 @@ export const TaskFormModal = ({
               <input
                 type="date"
                 {...register("dueDate", { required: "Due date is required" })}
-                className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
               />
               {errors.dueDate && (
-                <p className="text-xs text-rose-400 mt-1">
+                <p className="text-xs text-primary-400 mt-1">
                   {errors.dueDate.message}
                 </p>
               )}
@@ -142,7 +142,7 @@ export const TaskFormModal = ({
             <textarea
               {...register("description")}
               rows={5}
-              className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+              className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
               placeholder="Task details..."
             />
           </div>
@@ -189,7 +189,7 @@ export const TaskFormModal = ({
             <button
               type="submit"
               disabled={saving}
-              className="rounded-full bg-rose-500 px-5 py-2 text-sm font-semibold text-white shadow-rose-500/30 hover:bg-rose-400 disabled:opacity-60"
+              className="rounded-full bg-primary-500 px-5 py-2 text-sm font-semibold text-white shadow-primary-500/30 hover:bg-primary-400 disabled:opacity-60"
               onClick={handleSubmit(onSubmit)}
             >
               {saving ? "Creating..." : "Create Task"}

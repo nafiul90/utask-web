@@ -197,7 +197,7 @@ export const TaskDetailsModal = ({
                     </label>
                     <input
                       {...register("title", { required: "Title is required" })}
-                      className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                      className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                     />
                   </div>
 
@@ -208,7 +208,7 @@ export const TaskDetailsModal = ({
                       </label>
                       <select
                         {...register("assignee")}
-                        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                       >
                         <option value="">Unassigned</option>
                         {users?.map((u: User) => (
@@ -233,7 +233,7 @@ export const TaskDetailsModal = ({
                       <input
                         type="date"
                         {...register("startDate")}
-                        className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                        className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                       />
                     </div>
                     <div>
@@ -245,7 +245,7 @@ export const TaskDetailsModal = ({
                         {...register("dueDate", {
                           required: "Due date is required",
                         })}
-                        className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                        className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -257,7 +257,7 @@ export const TaskDetailsModal = ({
                     <textarea
                       {...register("description")}
                       rows={5}
-                      className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                      className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                     />
                   </div>
 
@@ -357,7 +357,7 @@ export const TaskDetailsModal = ({
                         Due Date
                       </label>
                       <span
-                        className={`text-white ${new Date(task.dueDate) < new Date() ? "text-rose-400" : ""}`}
+                        className={`text-white ${new Date(task.dueDate) < new Date() ? "text-primary-400" : ""}`}
                       >
                         {task.dueDate
                           ? new Date(task.dueDate).toLocaleDateString()
@@ -370,7 +370,7 @@ export const TaskDetailsModal = ({
                     <label className="mb-1 block text-sm text-slate-400">
                       Description
                     </label>
-                    <div className="prose prose-invert max-w-none text-slate-300 bg-white/5 p-4 rounded-xl min-h-[100px] whitespace-pre-wrap">
+                    <div className="pprimary pprimary-invert max-w-none text-slate-300 bg-white/5 p-4 rounded-xl min-h-[100px] whitespace-pre-wrap">
                       {task.description || "No description provided."}
                     </div>
                   </div>
@@ -422,13 +422,13 @@ export const TaskDetailsModal = ({
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Write a comment..."
-                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 pr-12 text-sm text-white focus:border-rose-400 focus:outline-none resize-none"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 pr-12 text-sm text-white focus:border-primary-400 focus:outline-none resize-none"
                     rows={2}
                   />
                   <button
                     type="submit"
                     disabled={!commentText.trim() || postingComment}
-                    className="absolute right-2 bottom-2 rounded-lg bg-rose-500 p-1.5 text-white shadow-lg transition hover:bg-rose-400 disabled:opacity-0"
+                    className="absolute right-2 bottom-2 rounded-lg bg-primary-500 p-1.5 text-white shadow-lg transition hover:bg-primary-400 disabled:opacity-0"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -479,7 +479,7 @@ export const TaskDetailsModal = ({
                     onClose();
                   }
                 }}
-                className="rounded-full border border-rose-500/50 bg-rose-500/10 px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/20 transition-all"
+                className="rounded-full border border-primary-500/50 bg-primary-500/10 px-4 py-2 text-sm text-primary-400 hover:bg-primary-500/20 transition-all"
               >
                 Delete
               </button>
@@ -495,7 +495,7 @@ export const TaskDetailsModal = ({
               type="button"
               disabled={saving}
               onClick={handleSubmit(onSubmit)}
-              className="rounded-full bg-rose-500 px-5 py-2 text-sm font-semibold text-white shadow-rose-500/30 hover:bg-rose-400 disabled:opacity-60"
+              className="rounded-full bg-primary-500 px-5 py-2 text-sm font-semibold text-white shadow-primary-500/30 hover:bg-primary-400 disabled:opacity-60"
             >
               {saving ? "Saving..." : "Save"}
             </button>

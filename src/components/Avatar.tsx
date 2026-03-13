@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import { UserRound } from 'lucide-react';
+import Image from "next/image";
+import { useState } from "react";
+import { UserRound } from "lucide-react";
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9052/api';
-const assetHost = apiBase.replace(/\/api$/, '');
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9052/api";
+const assetHost = apiBase.replace(/\/api$/, "");
 
 const resolveSrc = (path?: string | null) => {
   if (!path) return null;
-  if (path.startsWith('http')) return path;
+  if (path.startsWith("http")) return path;
   return `${assetHost}${path}`;
 };
 
@@ -19,7 +19,7 @@ interface AvatarProps {
   size?: number;
 }
 
-export const Avatar = ({ src, alt = 'Avatar', size = 48 }: AvatarProps) => {
+export const Avatar = ({ src, alt = "Avatar", size = 48 }: AvatarProps) => {
   const [hasError, setHasError] = useState(false);
   const resolved = resolveSrc(src);
 

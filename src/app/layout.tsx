@@ -7,7 +7,7 @@ import { PushNotificationInitializer } from "@/components/PushNotificationInitia
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "uTask Portal",
+  title: "Urelaa Task Portal",
   description: "Task management portal",
   manifest: "/manifest.json",
 };

@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { ProtectedPage } from '../../components/ProtectedPage';
-import { DashboardLayout } from '../../components/DashboardLayout';
-import { useAuth } from '../../context/AuthContext';
-import { Api } from '../../lib/api';
-import { Avatar } from '../../components/Avatar';
+import { ChangeEvent, FormEvent, useState } from "react";
+import { ProtectedPage } from "../../components/ProtectedPage";
+import { DashboardLayout } from "../../components/DashboardLayout";
+import { useAuth } from "../../context/AuthContext";
+import { Api } from "../../lib/api";
+import { Avatar } from "../../components/Avatar";
 
 export default function ProfilePage() {
   const { user, token, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({
-    fullName: user?.fullName || '',
-    jobTitle: user?.jobTitle || '',
-    department: user?.department || '',
-    profilePicture: user?.profilePicture || ''
+    fullName: user?.fullName || "",
+    jobTitle: user?.jobTitle || "",
+    department: user?.department || "",
+    profilePicture: user?.profilePicture || "",
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -25,9 +25,9 @@ export default function ProfilePage() {
   const openModal = () => {
     setForm({
       fullName: user.fullName,
-      jobTitle: user.jobTitle || '',
-      department: user.department || '',
-      profilePicture: user.profilePicture || ''
+      jobTitle: user.jobTitle || "",
+      department: user.department || "",
+      profilePicture: user.profilePicture || "",
     });
     setError(null);
     setIsEditing(true);
@@ -42,7 +42,7 @@ export default function ProfilePage() {
       const result = await Api.uploadProfileImage(token, file);
       setForm((prev) => ({ ...prev, profilePicture: result.path }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed');
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
     }
@@ -57,7 +57,7 @@ export default function ProfilePage() {
       updateUser(updated);
       setIsEditing(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
+      setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -69,16 +69,26 @@ export default function ProfilePage() {
         <div className="space-y-6 rounded-2xl border border-white/10 bg-white/5 p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-center gap-4">
-              <Avatar src={form.profilePicture || user.profilePicture} alt={user.fullName} size={80} />
+              <Avatar
+                src={form.profilePicture || user.profilePicture}
+                alt={user.fullName}
+                size={80}
+              />
               <div>
-                <p className="text-sm uppercase tracking-[0.4em] text-rose-300">Profile</p>
-                <h1 className="text-3xl font-semibold text-white">{user.fullName}</h1>
-                <p className="text-slate-400">{user.jobTitle || 'No title yet'}</p>
+                <p className="text-sm uppercase tracking-[0.4em] text-primary-300">
+                  Profile
+                </p>
+                <h1 className="text-3xl font-semibold text-white">
+                  {user.fullName}
+                </h1>
+                <p className="text-slate-400">
+                  {user.jobTitle || "No title yet"}
+                </p>
               </div>
             </div>
             <button
               onClick={openModal}
-              className="self-start rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:border-rose-400 hover:text-rose-200"
+              className="self-start rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:border-primary-400 hover:text-primary-200"
             >
               Edit profile
             </button>
@@ -94,7 +104,9 @@ export default function ProfilePage() {
             </div>
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-slate-400">Department</dt>
-              <dd className="font-medium text-white">{user.department || '—'}</dd>
+              <dd className="font-medium text-white">
+                {user.department || "—"}
+              </dd>
             </div>
           </dl>
         </div>
@@ -103,8 +115,13 @@ export default function ProfilePage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
             <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-white">Update profile</h2>
-                <button onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-white">
+                <h2 className="text-xl font-semibold text-white">
+                  Update profile
+                </h2>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="text-slate-400 hover:text-white"
+                >
                   ✕
                 </button>
               </div>
@@ -117,8 +134,14 @@ export default function ProfilePage() {
                     onChange={handleFileChange}
                     className="w-full rounded-xl border border-dashed border-white/15 bg-transparent px-4 py-3 text-sm text-white"
                   />
-                  {uploading && <p className="text-xs text-slate-400">Uploading…</p>}
-                  <Avatar src={form.profilePicture || user.profilePicture} alt="Preview" size={96} />
+                  {uploading && (
+                    <p className="text-xs text-slate-400">Uploading…</p>
+                  )}
+                  <Avatar
+                    src={form.profilePicture || user.profilePicture}
+                    alt="Preview"
+                    size={96}
+                  />
                 </label>
                 <label className="space-y-2 text-sm">
                   <span className="text-slate-400">Full name</span>
@@ -126,8 +149,10 @@ export default function ProfilePage() {
                     type="text"
                     required
                     value={form.fullName}
-                    onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                    onChange={(e) =>
+                      setForm({ ...form, fullName: e.target.value })
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                   />
                 </label>
                 <label className="space-y-2 text-sm">
@@ -135,8 +160,10 @@ export default function ProfilePage() {
                   <input
                     type="text"
                     value={form.jobTitle}
-                    onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
-                    className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                    onChange={(e) =>
+                      setForm({ ...form, jobTitle: e.target.value })
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                   />
                 </label>
                 <label className="space-y-2 text-sm">
@@ -144,11 +171,13 @@ export default function ProfilePage() {
                   <input
                     type="text"
                     value={form.department}
-                    onChange={(e) => setForm({ ...form, department: e.target.value })}
-                    className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-rose-400 focus:outline-none"
+                    onChange={(e) =>
+                      setForm({ ...form, department: e.target.value })
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
                   />
                 </label>
-                {error && <p className="text-sm text-rose-300">{error}</p>}
+                {error && <p className="text-sm text-primary-300">{error}</p>}
                 <div className="form-actions flex items-center justify-end gap-3">
                   <button
                     type="button"
@@ -160,9 +189,9 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="rounded-full bg-rose-500 px-5 py-2 text-sm font-semibold text-white shadow-rose-500/30 hover:bg-rose-400 disabled:opacity-60"
+                    className="rounded-full bg-primary-500 px-5 py-2 text-sm font-semibold text-white shadow-primary-500/30 hover:bg-primary-400 disabled:opacity-60"
                   >
-                    {saving ? 'Saving…' : 'Save changes'}
+                    {saving ? "Saving…" : "Save changes"}
                   </button>
                 </div>
               </form>

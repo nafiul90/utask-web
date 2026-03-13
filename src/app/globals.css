@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #6925ff;
+  --color-primary-500: #6925ff;
+  --color-primary-400: #8046ff;
+  --color-secondary: #c5ff2e;
+  --color-secondary-500: #c5ff2e;
+  --color-secondary-400: #d1ff58;
+}
+
 :root {
   color-scheme: dark;
 }

@@ -120,7 +120,7 @@ export const AudioRecorder = ({
             <button
               type="button"
               onClick={uploadRecording}
-              className="ml-auto p-3 rounded-full bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500/30 transition text-rose-300"
+              className="ml-auto p-3 rounded-full bg-primary-500/20 border border-primary-500/40 hover:bg-primary-500/30 transition text-primary-300"
             >
               <Upload size={20} />
             </button>

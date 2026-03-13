@@ -41,7 +41,7 @@ const RecentComments = () => {
 
   if (error)
     return (
-      <div className="text-rose-400 p-4 rounded">Error loading comments</div>
+      <div className="text-primary-400 p-4 rounded">Error loading comments</div>
     );
   if (!comments)
     return <div className="text-slate-400 p-4 rounded">Loading...</div>;
@@ -53,12 +53,12 @@ const RecentComments = () => {
       {comments.map((item) => (
         <div
           key={item.comment._id}
-          className="border-l-4 border-rose-500 pl-4 bg-slate-900/30 p-3 rounded-lg bg-white/5"
+          className="border-l-4 border-primary-500 pl-4 bg-slate-900/30 p-3 rounded-lg bg-white/5"
         >
           <div className="flex items-center gap-2 mb-1">
             <Link
               href={`/tasks/${item.taskId}?commentId=${item.comment._id}`}
-              className="font-semibold text-rose-400 hover:text-rose-300 text-sm truncate"
+              className="font-semibold text-secondary-500 hover:text-primary-300 text-sm truncate"
             >
               {item.taskTitle}
             </Link>

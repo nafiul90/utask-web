@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { Avatar } from "./Avatar";
 import { Menu, X } from "lucide-react";
 import { NotificationButton } from "./notifications/NotificationButton";
+import Image from "next/image";
 
 export const DashboardLayout = ({
   children,
@@ -28,8 +29,22 @@ export const DashboardLayout = ({
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
       <header className="border-b border-white/10 bg-slate-900/60 px-6 py-4 backdrop-blur sticky top-0 z-40">
         <div className="mx-auto flex max-w-screen items-center justify-between">
-          <Link href="/" className="text-lg font-semibold text-rose-400">
-            U Task Manager
+          <Link href="/">
+            <div className="flex gap-4 items-center">
+              <Image
+                alt=""
+                src="/logo.png"
+                width={50}
+                height={50}
+                className="rounded-lg"
+              />
+              <div>
+                <p className="text-sm">Good day,</p>{" "}
+                <p className="font-semibold text-secondary-400">
+                  {user?.fullName}
+                </p>
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
@@ -38,7 +53,7 @@ export const DashboardLayout = ({
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-slate-300 hover:text-rose-400 transition"
+                className="text-slate-300 hover:text-secondary-400 transition"
               >
                 {link.label}
               </Link>
@@ -52,7 +67,7 @@ export const DashboardLayout = ({
               /> */}
               <button
                 onClick={logout}
-                className="rounded-full border border-white/10 px-3 py-1 text-xs hover:text-rose-400 transition"
+                className="rounded-full border border-white/10 px-3 py-1 text-xs hover:text-primary-400 transition"
               >
                 Logout
               </button>
@@ -79,7 +94,7 @@ export const DashboardLayout = ({
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium text-slate-300 active:text-rose-400"
+                className="text-lg font-medium text-slate-300 active:text-primary-400"
               >
                 {link.label}
               </Link>
@@ -96,7 +111,7 @@ export const DashboardLayout = ({
               </div>
               <button
                 onClick={logout}
-                className="text-sm text-rose-400 font-medium"
+                className="text-sm text-primary-400 font-medium"
               >
                 Logout
               </button>

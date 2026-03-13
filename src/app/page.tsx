@@ -62,7 +62,7 @@ export default function DashboardPage() {
   return (
     <ProtectedPage>
       <DashboardLayout>
-        <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
         {/* Date Range Filter */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row gap-4 items-center">
@@ -72,7 +72,7 @@ export default function DashboardPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="bg-slate-900 border border-white/10 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:border-rose-500"
+              className="bg-slate-900 border border-white/10 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:border-primary-500"
             />
           </label>
           <label className="text-sm text-slate-300 flex items-center gap-2">
@@ -81,7 +81,7 @@ export default function DashboardPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="bg-slate-900 border border-white/10 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:border-rose-500"
+              className="bg-slate-900 border border-white/10 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:border-primary-500"
             />
           </label>
         </div>
@@ -92,7 +92,7 @@ export default function DashboardPage() {
             Overall Task Summary
           </p>
           {error ? (
-            <div className="text-rose-400 text-center py-8">
+            <div className="text-primary-400 text-center py-8">
               Failed to load task statistics: {error.message || error}
             </div>
           ) : !dashboardResponse ? (
@@ -125,7 +125,7 @@ export default function DashboardPage() {
             Team Member Task Breakdown
           </p>
           {error ? (
-            <div className="text-rose-400 text-center py-8">
+            <div className="text-primary-400 text-center py-8">
               Failed to load user task breakdown.
             </div>
           ) : !dashboardResponse ? (
@@ -143,18 +143,31 @@ export default function DashboardPage() {
                   key={userStat.assignee._id || "unassigned"}
                   className="rounded-xl border border-white/5 bg-slate-900/40 p-4 flex items-center gap-4"
                 >
-                  <Avatar
-                    src={userStat.assignee?.profilePicture}
-                    alt={userStat.assignee?.fullName || "Unassigned"}
-                    size={48}
-                  />
+                  <div className="hidden md:block">
+                    <Avatar
+                      src={userStat.assignee?.profilePicture}
+                      alt={userStat.assignee?.fullName || "Unassigned"}
+                      size={48}
+                    />
+                  </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-white">
-                      {userStat.assignee.fullName}
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      {userStat.assignee.role || "N/A"}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="md:hidden">
+                        <Avatar
+                          src={userStat.assignee?.profilePicture}
+                          alt={userStat.assignee?.fullName || "Unassigned"}
+                          size={48}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white">
+                          {userStat.assignee.fullName}
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          {userStat.assignee.role || "N/A"}
+                        </p>
+                      </div>
+                    </div>
                     <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
                       <span className="bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded">
                         Total: {userStat.total}
@@ -197,7 +210,7 @@ export default function DashboardPage() {
           <p>Need to review your details? Head to your profile page.</p>
           <Link
             href="/profile"
-            className="text-rose-300 hover:text-rose-200 mt-1 block"
+            className="text-primary-300 hover:text-primary-200 mt-1 block"
           >
             Go to profile →
           </Link>

@@ -52,7 +52,7 @@ export const FileList = ({ files, onRemove, readOnly }: FileListProps) => {
                 <button
                   type="button"
                   onClick={() => onRemove(index)}
-                  className="rounded p-1.5 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition"
+                  className="rounded p-1.5 text-slate-400 hover:bg-primary-500/20 hover:text-primary-400 transition"
                   title="Delete"
                 >
                   <Trash2 size={16} />
@@ -77,7 +77,7 @@ export const FileList = ({ files, onRemove, readOnly }: FileListProps) => {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
-                  <FileText className="text-rose-400" size={24} />
+                  <FileText className="text-primary-400" size={24} />
                 </div>
               )}
             </div>
@@ -111,7 +111,7 @@ export const FileList = ({ files, onRemove, readOnly }: FileListProps) => {
                 <button
                   type="button"
                   onClick={() => onRemove(index)}
-                  className="rounded p-1.5 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition"
+                  className="rounded p-1.5 text-slate-400 hover:bg-primary-500/20 hover:text-primary-400 transition"
                   title="Delete"
                 >
                   <Trash2 size={16} />

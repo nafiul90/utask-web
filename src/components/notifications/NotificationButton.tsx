@@ -234,7 +234,7 @@ export const NotificationButton = () => {
       >
         <Bell size={20} className="text-slate-300" />
         {stats && stats.unread > 0 && (
-          <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {stats.unread > 9 ? "9+" : stats.unread}
           </span>
         )}
@@ -254,7 +254,7 @@ export const NotificationButton = () => {
             {stats && stats.unread > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-sm text-rose-400 hover:text-rose-300 transition-colors"
+                className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
               >
                 Mark all as read
               </button>
@@ -319,7 +319,7 @@ export const NotificationButton = () => {
                           e.stopPropagation();
                           handleDeleteNotification(notification._id);
                         }}
-                        className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
+                        className="flex items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors ml-auto"
                       >
                         <Trash2 size={12} />
                         Delete
@@ -335,7 +335,7 @@ export const NotificationButton = () => {
             <div className="p-3 border-t border-white/10 text-center">
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-sm text-rose-400 hover:text-rose-300 transition-colors"
+                className="text-sm text-secondary-400 hover:text-primary-300 transition-colors"
               >
                 Close
               </button>

@@ -136,14 +136,14 @@ export default function TasksPage() {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition border ${
                   showFilters || activeFilterCount > 0
-                    ? "bg-rose-500/10 border-rose-500/50 text-rose-400"
+                    ? "bg-secondary-500/10 border-secondary-500/50 text-secondary-400"
                     : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
                 }`}
               >
                 <Filter size={18} />
                 Filters
                 {activeFilterCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                  <span className="absolute -top-2 -right-2 bg-primary-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
                     {activeFilterCount}
                   </span>
                 )}
@@ -152,7 +152,7 @@ export default function TasksPage() {
               {canCreate && (
                 <button
                   onClick={() => setIsCreateOpen(true)}
-                  className="bg-rose-500 hover:bg-rose-400 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-rose-500/20"
+                  className="bg-primary hover:bg-primary-400 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-primary-500/20"
                 >
                   New Task
                 </button>
@@ -164,7 +164,7 @@ export default function TasksPage() {
           <div className="space-y-4">
             <div className="relative">
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                className="absolute left-4 top-1/4 -translate-y-1/2 text-slate-500"
                 size={20}
               />
               <input
@@ -172,7 +172,7 @@ export default function TasksPage() {
                 placeholder="Search by task title or description..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-rose-500 transition shadow-inner"
+                className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-primary-500 transition shadow-inner"
               />
             </div>
 
@@ -185,7 +185,7 @@ export default function TasksPage() {
                   <select
                     value={selectedAssignee}
                     onChange={(e) => setSelectedAssignee(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-500"
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500"
                   >
                     <option value="">All Members</option>
                     {users?.map((u: any) => (
@@ -203,7 +203,7 @@ export default function TasksPage() {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-500"
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500"
                   />
                 </div>
                 <div className="space-y-1">
@@ -214,7 +214,7 @@ export default function TasksPage() {
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-500"
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500"
                   />
                 </div>
                 <div className="flex items-end">
@@ -231,7 +231,7 @@ export default function TasksPage() {
           </div>
 
           {error ? (
-            <div className="p-10 text-center text-rose-400 bg-rose-500/5 rounded-3xl border border-rose-500/10 italic">
+            <div className="p-10 text-center text-primary-400 bg-primary-500/5 rounded-3xl border border-primary-500/10 italic">
               Failed to load tasks. Please try again.
             </div>
           ) : !tasks ? (

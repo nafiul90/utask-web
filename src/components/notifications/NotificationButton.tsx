@@ -274,15 +274,12 @@ export const NotificationButton = () => {
             ) : (
               <div className="divide-y divide-white/5">
                 {notifications.map((notification) => (
-                  <Link
+                  <div
                     key={notification._id}
-                    href={getUrl(notification.type, notification)}
+                    className={`p-4 hover:bg-white/5 transition-colors ${!notification.read ? "bg-slate-800/50" : ""}`}
+                    // onClick={() => window.location.reload()}
                   >
-                    <div
-                      key={notification._id}
-                      className={`p-4 hover:bg-white/5 transition-colors ${!notification.read ? "bg-slate-800/50" : ""}`}
-                      // onClick={() => window.location.reload()}
-                    >
+                    <Link href={getUrl(notification.type, notification)}>
                       <div className="flex items-start gap-3">
                         <div className="text-xl mt-1">
                           {getNotificationIcon(notification.type)}
@@ -306,29 +303,29 @@ export const NotificationButton = () => {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 mt-3">
-                        {!notification.read && (
-                          <button
-                            onClick={() => handleMarkAsRead(notification._id)}
-                            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
-                          >
-                            <Check size={12} />
-                            Mark as read
-                          </button>
-                        )}
+                    </Link>
+                    <div className="flex items-center gap-2 mt-3">
+                      {!notification.read && (
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteNotification(notification._id);
-                          }}
-                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
+                          onClick={() => handleMarkAsRead(notification._id)}
+                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
                         >
-                          <Trash2 size={12} />
-                          Delete
+                          <Check size={12} />
+                          Mark as read
                         </button>
-                      </div>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteNotification(notification._id);
+                        }}
+                        className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-400 transition-colors ml-auto"
+                      >
+                        <Trash2 size={12} />
+                        Delete
+                      </button>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}

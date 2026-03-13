@@ -452,7 +452,7 @@ export const TaskDetailsModal = ({
                 }}
                 className="rounded-full border border-rose-500/50 bg-rose-500/10 px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/20 transition-all"
               >
-                Delete Task
+                Delete
               </button>
             )}
             <button
@@ -468,7 +468,7 @@ export const TaskDetailsModal = ({
               onClick={handleSubmit(onSubmit)}
               className="rounded-full bg-rose-500 px-5 py-2 text-sm font-semibold text-white shadow-rose-500/30 hover:bg-rose-400 disabled:opacity-60"
             >
-              {saving ? "Saving..." : "Save Changes"}
+              {saving ? "Saving..." : "Save"}
             </button>
           </div>
         )}

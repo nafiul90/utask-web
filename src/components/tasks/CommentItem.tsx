@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Api } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import { Avatar } from "../Avatar";
+import { Delete, DeleteIcon, Edit, Edit2 } from "lucide-react";
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return "";
@@ -121,23 +122,21 @@ export const CommentItem = ({
               <span className="text-sm font-medium text-white">
                 {comment.author?.fullName}
               </span>
-              <span className="text-xs text-slate-500">
-                {formatDate(comment.createdAt)}
-              </span>
             </div>
+
             {canEdit && !isEditing && (
-              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex gap-2 transition-opacity">
                 <button
                   onClick={() => setIsEditing(true)}
                   className="text-xs text-slate-400 hover:text-white"
                 >
-                  Edit
+                  <Edit2 size={15} />
                 </button>
                 <button
                   onClick={handleDelete}
                   className="text-xs text-rose-400 hover:text-rose-300"
                 >
-                  Delete
+                  <DeleteIcon size={15} />
                 </button>
               </div>
             )}
@@ -172,6 +171,9 @@ export const CommentItem = ({
               {comment.content}
             </p>
           )}
+          <span className="text-xs text-slate-500">
+            {formatDate(comment.createdAt)}
+          </span>
         </div>
 
         {/* Actions bar (Reply) */}

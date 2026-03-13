@@ -202,7 +202,7 @@ export const NotificationButton = () => {
       case "status_changed":
         return `/tasks/${notification.relatedTaskId?._id}`;
       default:
-        return "📢";
+        return "/tasks/${notification.relatedTaskId?._id}";
     }
   };
 

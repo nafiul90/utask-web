@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { Api } from "../../lib/api";
@@ -17,23 +17,27 @@ interface TaskFormData {
   description: string;
   assignee: string;
   dueDate: string;
+  phoneToNotify: string;
 }
 
 interface TaskFormModalProps {
   token: string;
   onClose: () => void;
   onSuccess: () => void;
+  phoneToNotify: string;
 }
 
 export const TaskFormModal = ({
   token,
   onClose,
   onSuccess,
+  phoneToNotify,
 }: TaskFormModalProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<TaskFormData>();
   const [saving, setSaving] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
@@ -69,6 +73,14 @@ export const TaskFormModal = ({
   const handleRemoveLink = (index: number) => {
     setLinks((prev) => prev.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+    if (phoneToNotify) {
+      reset({
+        phoneToNotify,
+      });
+    }
+  }, [phoneToNotify]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
@@ -176,6 +188,16 @@ export const TaskFormModal = ({
               disabled={saving} // Disable when parent form is saving
             />
             <LinkList links={links} onRemove={handleRemoveLink} />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm text-slate-300">
+              Phone number to notify
+            </label>
+            <input
+              {...register("phoneToNotify")}
+              className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
+              placeholder="Whatsapp number"
+            />
           </div>
 
           <div className="form-actions flex justify-end gap-3 pt-4 border-t border-white/10">

@@ -32,6 +32,9 @@ export default function TasksPage() {
   const [commentId, setCommentId] = useState(
     searchParams.get("commentId") || "",
   );
+  const [phoneToNotify, setPhoneToNotify] = useState(
+    searchParams.get("phoneToNotify") || "",
+  );
   const [showFilters, setShowFilters] = useState(false);
 
   // Fetch data from backend with query params
@@ -42,6 +45,7 @@ export default function TasksPage() {
     ...(endDate && { endDate }),
     ...(taskId && { taskId }),
     ...(commentId && { commentId }),
+    ...(phoneToNotify && { phoneToNotify }),
   }).toString();
 
   const {
@@ -83,6 +87,12 @@ export default function TasksPage() {
     }
   }, [searchParams.get("taskId")]);
 
+  useEffect(() => {
+    if (phoneToNotify) {
+      setIsCreateOpen(true);
+    }
+  }, [searchParams.get("phoneToNotify")]);
+
   const canCreate = user?.role === "admin" || user?.role === "manager";
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
@@ -110,6 +120,7 @@ export default function TasksPage() {
     setEndDate("");
     setTaskId("");
     setCommentId("");
+    setPhoneToNotify("");
   };
 
   const activeFilterCount = [
@@ -253,6 +264,7 @@ export default function TasksPage() {
               token={token}
               onClose={() => setIsCreateOpen(false)}
               onSuccess={() => mutate()}
+              phoneToNotify={phoneToNotify}
             />
           )}
 

@@ -71,6 +71,7 @@ export const TaskDetailsModal = ({
         startDate: task.startDate
           ? new Date(task.startDate).toISOString().split("T")[0]
           : "",
+        phoneToNotify: task.phoneToNotify,
       });
       setAttachments(task.attachments || []);
       setLinks(task.links || []); // Initialize links state
@@ -287,6 +288,16 @@ export const TaskDetailsModal = ({
                       files={attachments}
                       onRemove={handleRemoveFile}
                       readOnly={saving}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm text-slate-300">
+                      Phone number to notify
+                    </label>
+                    <input
+                      {...register("phoneToNotify")}
+                      className="w-full rounded-xl border border-white/10 bg-transparent px-4 py-2 text-white focus:border-primary-400 focus:outline-none"
+                      placeholder="Whatsapp number"
                     />
                   </div>
 
